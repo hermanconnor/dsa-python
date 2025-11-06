@@ -11,6 +11,46 @@ class DynamicArray:
         """Return a new array with capacity, new_capacity."""
         return (new_capacity * ctypes.py_object)()
 
+    def __getitem__(self, index):
+        """
+        Get element at the given index.
+
+        Args:
+            index (int): Index of the element to retrieve.
+
+        Returns:
+            The element at the given index.
+
+        Raises:
+            IndexError: If index is out of bounds.
+        """
+        if not -self._size <= index < self._size:
+            raise IndexError("Index out of bounds")
+
+        if index < 0:
+            index += self._size
+
+        return self._A[index]
+
+    def __setitem__(self, index, value):
+        """
+        Set element at the given index.
+
+        Args:
+            index (int): Index where to set the value.
+            value: Value to set.
+
+        Raises:
+            IndexError: If index is out of bounds.
+        """
+        if not -self._size <= index < self._size:
+            raise IndexError("Index out of bounds")
+
+        if index < 0:
+            index += self._size
+
+        self._A[index] = value
+
     def __len__(self):
         """Return the number of elements in the array."""
         return self._size
