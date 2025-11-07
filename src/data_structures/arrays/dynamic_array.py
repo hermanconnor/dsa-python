@@ -46,17 +46,65 @@ class DynamicArray:
         self._A[index] = value
         self._size += 1
 
-    def remove(self):
-        pass
+    def delete(self, index):
+        """
+        Delete element at the given index.
+        O(n) time complexity.
 
-    def delete(self):
+        Args:
+            index (int): Index of the element to delete.
+
+        Returns:
+            The deleted element.
+
+        Raises:
+            IndexError: If index is out of bounds.
+        """
+        if not -self._size <= index < self._size:
+            raise IndexError("Index out of bounds")
+
+        if index < 0:
+            index += self._size
+
+        deleted_value = self._A[index]
+
+        # Shift elements to the left
+        for i in range(index, self._size - 1):
+            self._A[i] = self._A[i + 1]
+
+        self._size -= 1
+
+        # Shrink capacity if array is 1/4 full
+        if self._size > 0 and self._size < self._capacity // 4:
+            self._resize(self._capacity // 2)
+
+        return deleted_value
+
+    def remove(self):
         pass
 
     def pop(self):
         pass
 
-    def index(self):
-        pass
+    def index(self, value):
+        """
+        Find the index of the first occurrence of a value.
+        O(n) time complexity.
+
+        Args:
+            value: Value to search for.
+
+        Returns:
+            Index of the first occurrence.
+
+        Raises:
+            ValueError: If value is not found.
+        """
+        for i in range(self._size):
+            if self._A[i] == value:
+                return i
+
+        raise ValueError(f"{value} not in array")
 
     def clear(self):
         """
@@ -93,7 +141,7 @@ class DynamicArray:
 
     def _make_array(self, new_capacity):
         """Return a new array with capacity, new_capacity."""
-        return (new_capacity * ctypes.py_object)()
+        return (ctypes.py_object * new_capacity)()
 
     def __getitem__(self, index):
         """
