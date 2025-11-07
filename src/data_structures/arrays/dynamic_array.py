@@ -80,11 +80,42 @@ class DynamicArray:
 
         return deleted_value
 
-    def remove(self):
-        pass
+    def remove(self, value):
+        """
+        Remove the first occurrence of a value from the array.
+        O(n) time complexity.
 
-    def pop(self):
-        pass
+        Args:
+            value: Value to remove.
+
+        Raises:
+            ValueError: If value is not found.
+        """
+        for i in range(self._size):
+            if self._A[i] == value:
+                self.delete(i)
+                return
+
+        raise ValueError(f"{value} not in array")
+
+    def pop(self, index=-1):
+        """
+        Remove and return element at the given index (default: last element).
+        O(n) time complexity for arbitrary index, O(1) for last element.
+
+        Args:
+            index (int): Index of the element to remove (default: -1).
+
+        Returns:
+            The removed element.
+
+        Raises:
+            IndexError: If the array is empty or index is out of bounds.
+        """
+        if self._size == 0:
+            raise IndexError("pop from empty array")
+
+        return self.delete(index)
 
     def index(self, value):
         """
