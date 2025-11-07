@@ -7,6 +7,51 @@ class DynamicArray:
         self._capacity = 1
         self._A = self._make_array(self._capacity)
 
+    def append(self):
+        pass
+
+    def insert(self):
+        pass
+
+    def remove(self):
+        pass
+
+    def delete(self):
+        pass
+
+    def pop(self):
+        pass
+
+    def index(self):
+        pass
+
+    def clear(self):
+        pass
+
+    def is_empty(self):
+        """Check if the array is empty."""
+        return self._size == 0
+
+    def capacity(self):
+        """Return the current capacity of the array."""
+        return self._capacity
+
+    def _resize(self, new_capacity):
+        """
+        Resize the internal array to the new capacity.
+        O(n) time complexity.
+
+        Args:
+            new_capacity (int): New capacity for the array.
+        """
+        new_array = self._make_array(new_capacity)
+
+        for i in range(self._size):
+            new_array[i] = self._A[i]
+
+        self._A = new_array
+        self._capacity = new_capacity
+
     def _make_array(self, new_capacity):
         """Return a new array with capacity, new_capacity."""
         return (new_capacity * ctypes.py_object)()
