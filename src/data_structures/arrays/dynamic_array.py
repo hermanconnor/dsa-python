@@ -7,11 +7,44 @@ class DynamicArray:
         self._capacity = 1
         self._A = self._make_array(self._capacity)
 
-    def append(self):
-        pass
+    def append(self, value):
+        """
+        Append an element to the end of the array.
+        Amortized O(1) time complexity.
 
-    def insert(self):
-        pass
+        Args:
+            value: Element to append.
+        """
+        if self._size == self._capacity:
+            self._resize(2 * self._capacity)
+
+        self._A[self._size] = value
+        self._size += 1
+
+    def insert(self, index, value):
+        """
+        Insert an element at the given index.
+        O(n) time complexity.
+
+        Args:
+            index (int): Index where to insert the element.
+            value: Element to insert.
+
+        Raises:
+            IndexError: If index is out of bounds.
+        """
+        if not 0 <= index <= self._size:
+            raise IndexError("Index out of bounds")
+
+        if self._size == self._capacity:
+            self._resize(2 * self._capacity)
+
+        # Shift elements to the right
+        for i in range(self._size, index, -1):
+            self._A[i] = self._A[i - 1]
+
+        self._A[index] = value
+        self._size += 1
 
     def remove(self):
         pass
@@ -26,7 +59,13 @@ class DynamicArray:
         pass
 
     def clear(self):
-        pass
+        """
+        Remove all elements from the array.
+        O(1) time complexity.
+        """
+        self._size = 0
+        self._capacity = 1
+        self._A = self._make_array(self._capacity)
 
     def is_empty(self):
         """Check if the array is empty."""
