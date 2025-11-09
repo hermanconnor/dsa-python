@@ -1,5 +1,5 @@
 from collections import Counter
-import typing as t
+from typing import Iterator, Hashable
 
 
 class Multiset:
@@ -9,23 +9,51 @@ class Multiset:
         self.items = Counter()
         self._size = 0
 
-    def add(self):
-        pass
+    def add(self, item: Hashable) -> None:
+        """Add an item to the multiset - O(1) average."""
+        self.items[item] += 1
+        self._size += 1
 
-    def remove(self):
-        pass
+    def remove(self, item: Hashable) -> bool:
+        """
+        Remove one occurrence of item.
+        Returns True if the item was removed, False otherwise - O(1) average.
+        """
+        if self.items[item] > 0:
+            self.items[item] -= 1
+            self._size -= 1
+            # Clean up the Counter if the count reaches zero
+            if self.items[item] == 0:
+                del self.items[item]
 
-    def count(self):
-        pass
+            return True
 
-    def is_empty(self):
-        pass
+        return False
 
-    def __contains__(self):
-        pass
+    def count(self, item: Hashable) -> int:
+        """Count occurrences of item - O(1) average."""
+        # Counter naturally returns 0 for non-existent items
+        return self.items[item]
 
-    def __iter__(self):
-        pass
+    def is_empty(self) -> bool:
+        """Check if multiset is empty - O(1)"""
+        return self._size == 0
 
-    def __repr__(self):
-        pass
+    def __len__(self) -> int:
+        """Returns total number of items - O(1)."""
+        return self._size
+
+    def __contains__(self, item: Hashable) -> bool:
+        """Support 'in' operator (e.g., if 'apple' in bag) - O(1) average."""
+        return self.items[item] > 0
+
+    def __iter__(self) -> Iterator[Hashable]:
+        """Make bag iterable, yielding all items including duplicates."""
+        return self.items.elements()
+
+    def __repr__(self) -> str:
+        """
+        Returns s string representation for debugging/console use.
+        Shows the internal Counter contents.
+        """
+        return f"BagCounter({dict(self.items)})"
