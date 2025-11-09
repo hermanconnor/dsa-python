@@ -8,13 +8,12 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 
 ## 📚 Data Structures
 
-### Linear Data Structures
-
 - [x] Array / Dynamic Array
-- [ ] Linked List (Singly)
-- [ ] Linked List (Doubly)
+- [x] Multiset (Bag)
 - [ ] Stack
 - [ ] Queue
+- [ ] Linked List (Singly)
+- [ ] Linked List (Doubly)
 - [ ] Deque
 
 ## 🎯 Learning Goals
