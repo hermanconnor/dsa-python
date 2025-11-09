@@ -49,7 +49,7 @@ class DynamicArray:
     def delete(self, index):
         """
         Delete element at the given index.
-        O(n) time complexity.
+        O(n) time complexity, but O(1) for the last element.
 
         Args:
             index (int): Index of the element to delete.
@@ -68,14 +68,24 @@ class DynamicArray:
 
         deleted_value = self._A[index]
 
-        # Shift elements to the left
-        for i in range(index, self._size - 1):
-            self._A[i] = self._A[i + 1]
+        # Check if we are deleting the last element
+        if index != self._size - 1:
+            # Shift elements to the left (O(n) operation)
+            for i in range(index, self._size - 1):
+                self._A[i] = self._A[i + 1]
+
+        # Optional: Clear the reference to the deleted item in the old array slot
+        # This prevents memory leaks for mutable objects
+        # Note: This step is not strictly necessary but is good practice for low-level arrays
+        # if you were not immediately resizing or overwriting the slot.
+        self._A[self._size - 1] = None
 
         self._size -= 1
 
         # Shrink capacity if array is 1/4 full
         if self._size > 0 and self._size < self._capacity // 4:
+            # Note: Resizing is still an O(n) operation,
+            # but is amortized O(1) across a series of deletes.
             self._resize(self._capacity // 2)
 
         return deleted_value
@@ -170,7 +180,7 @@ class DynamicArray:
         self._A = new_array
         self._capacity = new_capacity
 
-    def _make_array(self, new_capacity):
+    def _make_array(self, new_capacity: int):
         """Return a new array with capacity, new_capacity."""
         return (ctypes.py_object * new_capacity)()
 
@@ -221,6 +231,19 @@ class DynamicArray:
     def __str__(self):
         """Return string representation of the array."""
         return "[" + ", ".join(str(self._A[i]) for i in range(self._size)) + "]"
+
+    def __iter__(self):
+        """Allow iteration over elements."""
+        for i in range(self._size):
+            yield self._A[i]
+
+    def __contains__(self, value):
+        """Check if the value is present (allows 'value in array')."""
+        try:
+            self.index(value)
+            return True
+        except ValueError:
+            return False
 
     def __repr__(self):
         """Return detailed representation of the array."""
