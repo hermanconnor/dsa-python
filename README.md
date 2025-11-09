@@ -10,7 +10,7 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 
 ### Linear Data Structures
 
-- [ ] Array / Dynamic Array
+- [x] Array / Dynamic Array
 - [ ] Linked List (Singly)
 - [ ] Linked List (Doubly)
 - [ ] Stack
