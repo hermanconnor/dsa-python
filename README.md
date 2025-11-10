@@ -10,8 +10,8 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 
 - [x] Array / Dynamic Array
 - [x] Multiset (Bag)
-- [ ] Stack
-- [ ] Queue
+- [x] Stack
+- [x] Queue
 - [ ] Linked List (Singly)
 - [ ] Linked List (Doubly)
 - [ ] Deque
