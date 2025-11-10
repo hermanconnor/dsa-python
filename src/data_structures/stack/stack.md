@@ -1,9 +1,9 @@
 # Stack
 
-A **Stack** is a **linear data structure** that follows the principle of **LIFO (Last In, First Out)** — the last element added to the stack is the first one to be removed.
+A **stack** is a linear data structure that follows the **Last-In, First-Out (LIFO)** principle. Think of it like a stack of plates or books. The last plate you put on top is the first one you can take off.
 
-You can think of it like a stack of plates:
+Here's a breakdown of the key characteristics:
 
-* You **add (push)** plates on top.
-* You **remove (pop)** plates from the top.
-* You can only see or interact with the **top** plate at any time.
+- **LIFO (Last-In, First-Out):** The element inserted most recently is the first one to be removed.
+- **Linear Data Structure:** Elements are arranged in a sequential order.
+- **Single Point of Access:** Operations (insertion and deletion) are typically performed at only one end, called the **top** of the stack.
