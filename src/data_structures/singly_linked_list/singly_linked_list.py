@@ -20,14 +20,56 @@ class LinkedList:
         self._tail = None
         self._size = 0
 
-    def append(self):
-        pass
+    def append(self, data):
+        """Add a new node at the end of the list. O(1)."""
+        new_node = Node(data)
 
-    def prepend(self):
-        pass
+        if self._head is Node:
+            self._head = new_node
+            self._tail = new_node
+        else:
+            self._tail.next = new_node
+            self._tail = new_node
 
-    def insert(self):
-        pass
+        self._size += 1
+
+    def prepend(self, data):
+        """Add a new node at the beginning of the list. O(1)."""
+        new_node = Node(data)
+
+        if self._head is None:
+            self._head = new_node
+            self._tail = new_node
+        else:
+            new_node.next = self._head
+            self._head = new_node
+
+        self._size += 1
+
+    def insert(self, index, data):
+        """Insert a new node at the specified index. O(n)."""
+        if index < 0 or index > self._size:
+            raise IndexError("Index out of range")
+
+        if index == 0:
+            self.prepend(data)
+            return
+
+        if index == self._size:
+            self.append(data)
+            return
+
+        new_node = Node(data)
+        current = self._head
+
+        # Stop at the node BEFORE the insertion point
+        for _ in range(index - 1):
+            current = current.next
+
+        new_node.next = current.next
+        current.next = new_node
+
+        self._size += 1
 
     def pop_left(self):
         pass
