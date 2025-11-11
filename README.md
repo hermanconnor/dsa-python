@@ -1,10 +1,11 @@
 # Data Structures & Algorithms in Python
 
-A comprehensive collection of data structures and algorithms implemented in Python, built for learning purposes.
+A comprehensive collection of data structures and algorithms implemented in Python, built for my learning purposes.
 
 ## 🚀 Tech Stack
 
 - **Python**
+- **Pytest**
 
 ## 📚 Data Structures
 
@@ -16,7 +17,7 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 - [ ] Linked List (Doubly)
 - [ ] Deque
 
-## 🎯 Learning Goals
+## 🎯 My Learning Goals
 
 - Master fundamental data structures and their operations
 - Understand time and space complexity analysis
