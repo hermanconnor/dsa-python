@@ -60,13 +60,31 @@ class LinkedList:
         pass
 
     def __len__(self):
-        pass
+        """Support for the len() function."""
+        return self._size
 
     def __iter__(self):
-        pass
+        """
+        Allow iteration over the linked list (yields nodes). O(n) total.
+        Example: for node in my_list: print(node.data)
+        """
+        current = self._head
+        while current:
+            yield current.data  # Yield the data for general list-like use
+            current = current.next
 
     def __str__(self):
-        pass
+        """String representation for print() in a list-like format. O(n)."""
+        elements = [str(data) for data in self]
+        return f"[{', '.join(elements)}]"
 
     def __repr__(self):
-        pass
+        """Official string representation of the list object, useful for debugging. O(n)."""
+        elements = []
+        current = self._head
+
+        while current:
+            elements.append(repr(current.data))
+            current = current.next
+
+        return f"LinkedList([{', '.join(elements)}])"
