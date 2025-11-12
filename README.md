@@ -13,7 +13,7 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 - [x] Multiset (Bag)
 - [x] Stack
 - [x] Queue
-- [ ] Linked List (Singly)
+- [x] Linked List (Singly)
 - [ ] Linked List (Doubly)
 - [ ] Deque
 
