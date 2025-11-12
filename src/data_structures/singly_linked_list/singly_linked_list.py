@@ -88,7 +88,7 @@ class LinkedList:
         return data
 
     def pop(self):
-        """Remove and return the data of the tail node (last element). O(n) for Singly List."""
+        """Remove and return the data of the tail node (last element). O(n)."""
         if self._tail is None:
             raise IndexError("pop from empty list")
 
@@ -136,26 +136,91 @@ class LinkedList:
 
         return False
 
-    def delete_at_index(self):
-        pass
+    def delete_at_index(self, index):
+        """Delete the node at the specified index. O(n)."""
+        if index < 0 or index >= self._size:
+            raise IndexError("Index out of range")
 
-    def find(self):
-        pass
+        if index == 0:
+            return self.pop_left()
 
-    def get(self):
-        pass
+        current = self._head
+        # Stop at the node BEFORE the deletion point
+        for _ in range(index - 1):
+            current = current.next
+
+        deleted_data = current.next.data
+
+        # If deleting the tail node
+        if current.next == self._tail:
+            self._tail = current
+
+        current.next = current.next.next
+        self._size -= 1
+        return deleted_data
+
+    def find(self, data):
+        """Find the index of the first occurrence of data. O(n)."""
+        for index, item_data in enumerate(self):
+            if item_data == data:
+                return index
+
+        return -1
+
+    def get(self, index):
+        """Get the data at the specified index. O(n)."""
+        if index < 0 or index >= self._size:
+            raise IndexError("Index out of range")
+
+        current = self._head
+        for _ in range(index):
+            current = current.next
+
+        return current.data
 
     def get_head(self):
-        pass
+        """Get the data of the head node. O(1)."""
+        if self._head is None:
+            raise IndexError("List is empty")
+        return self._head.data
 
     def get_tail(self):
-        pass
+        """Get the data of the tail node. O(1)."""
+        if self._tail is None:
+            raise IndexError("List is empty")
+        return self._tail.data
 
     def is_empty(self):
-        pass
+        """Check if the list is empty. O(1)."""
+        return self._head is None
 
     def reverse(self):
-        pass
+        """Reverse the linked list in-place. O(n)."""
+        if self._head is None or self._head.next is None:
+            return
+
+        prev = None
+        current = self._head
+        self._tail = self._head
+
+        while current:
+            next_node = current.next
+            current.next = prev
+            prev = current
+            current = next_node
+
+        self._head = prev
+
+    def to_list(self):
+        """Convert the linked list to a Python list. O(n)."""
+        result = []
+        current = self._head
+
+        while current:
+            result.append(current.data)
+            current = current.next
+
+        return result
 
     def __len__(self):
         """Support for the len() function."""
@@ -163,8 +228,7 @@ class LinkedList:
 
     def __iter__(self):
         """
-        Allow iteration over the linked list (yields nodes). O(n) total.
-        Example: for node in my_list: print(node.data)
+        Allow iteration over the linked list. O(n) total.
         """
         current = self._head
         while current:
