@@ -24,7 +24,7 @@ class LinkedList:
         """Add a new node at the end of the list. O(1)."""
         new_node = Node(data)
 
-        if self._head is Node:
+        if self._head is None:
             self._head = new_node
             self._tail = new_node
         else:
@@ -72,13 +72,69 @@ class LinkedList:
         self._size += 1
 
     def pop_left(self):
-        pass
+        """Remove and return the data of the head node (first element). O(1)."""
+        if self._head is None:
+            raise IndexError("pop_left from empty list")
+
+        data = self._head.data
+
+        if self._head == self._tail:  # Only one element
+            self._head = None
+            self._tail = None
+        else:
+            self._head = self._head.next
+
+        self._size -= 1
+        return data
 
     def pop(self):
-        pass
+        """Remove and return the data of the tail node (last element). O(n) for Singly List."""
+        if self._tail is None:
+            raise IndexError("pop from empty list")
 
-    def delete(self):
-        pass
+        data = self._tail.data
+
+        if self._head == self._tail:  # Only one element
+            self._head = None
+            self._tail = None
+        else:
+            current = self._head
+            while current.next != self._tail:
+                current = current.next
+
+            current.next = None
+            self._tail = current
+
+        self._size -= 1
+        return data
+
+    def delete(self, data):
+        """Delete the first occurrence of data from the list. O(n)."""
+        if self._head is None:
+            return False
+
+        # Case 1: Deleting the head node
+        if self._head.data == data:
+            self._head = self._head.next
+            if self._head is None:  # If list is now empty
+                self._tail = None
+            self._size -= 1
+            return True
+
+        current = self._head
+        while current.next:
+            if current.next.data == data:
+                # Case 2: Deleting the tail node
+                if current.next == self._tail:
+                    self._tail = current
+
+                # Delete the node
+                current.next = current.next.next
+                self._size -= 1
+                return True
+            current = current.next
+
+        return False
 
     def delete_at_index(self):
         pass
