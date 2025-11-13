@@ -159,6 +159,41 @@ def test_delete_at_index_invalid(populated_list):
         populated_list.delete_at_index(4)
 
 
+def test_clear(populated_list):
+    populated_list.clear()
+
+    assert populated_list.is_empty() is True
+    assert populated_list.head is None
+    assert populated_list.tail is None
+    assert populated_list._size == 0
+
+
+def test_reverse(populated_list):
+    populated_list.reverse()
+
+    assert list(populated_list) == [4, 3, 2, 1]
+    assert populated_list.head.data == 4
+    assert populated_list.tail.data == 1
+    assert populated_list.head.next.data == 3
+    assert populated_list.tail.prev.data == 2
+
+
+def test_find_forward(populated_list):
+    populated_list.append(2)  # [1, 2, 3, 4, 2]
+
+    assert populated_list.find(2) == 1  # Finds first occurrence
+    assert populated_list.find(4) == 3
+    assert populated_list.find(99) == -1
+
+
+def test_find_from_tail_backward(populated_list):
+    populated_list.prepend(3)  # [3, 1, 2, 3, 4]
+    # Finds last occurrence at index 3
+    assert populated_list.find_from_tail(3) == 3
+    assert populated_list.find_from_tail(1) == 1
+    assert populated_list.find_from_tail(99) == -1
+
+
 def test_get_head_tail(empty_list):
     with pytest.raises(IndexError):
         empty_list.get_head()

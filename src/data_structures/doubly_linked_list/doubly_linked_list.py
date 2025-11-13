@@ -134,8 +134,69 @@ class DoublyLinkedList(Generic[T]):
         """
         if not self.tail:
             raise IndexError("List is empty")
-
         return self.tail.data
+
+    def find(self, data: T) -> int:
+        """
+        Find the index of the first occurrence of data.
+        Returns -1 if not found.
+        Time complexity: O(n).
+        """
+        current = self.head
+        index = 0
+
+        while current:
+            if current.data == data:
+                return index
+            current = current.next
+            index += 1
+
+        return -1
+
+    def find_from_tail(self, data: T) -> int:
+        """
+        Find the index of the last occurrence of data by searching from tail.
+        Returns -1 if not found.
+        Time complexity: O(n).
+        """
+        current = self.tail
+        index = self._size - 1
+
+        while current:
+            if current.data == data:
+                return index
+            current = current.prev
+            index -= 1
+
+        return -1
+
+    def reverse(self) -> None:
+        """
+        Reverse the list in-place.
+        Time complexity: O(n).
+        """
+        current = self.head
+        while current:
+            current.prev, current.next = current.next, current.prev
+            current = current.prev
+
+        self.head, self.tail = self.tail, self.head
+
+    def clear(self) -> None:
+        """
+        Remove all nodes from the list.
+        Time complexity: O(1).
+        """
+        self.head = None
+        self.tail = None
+        self._size = 0
+
+    def is_empty(self) -> bool:
+        """
+        Check if the list is empty.
+        Time complexity: O(1).
+        """
+        return self._size == 0
 
     def _get_node(self, index: int) -> DoublyNode[T]:
         """
@@ -224,4 +285,8 @@ class DoublyLinkedList(Generic[T]):
 
     def __reversed__(self) -> Iterator[T]:
         """Reverse iterator. O(n) total to iterate through all nodes."""
-        pass
+        current = self.tail
+
+        while current:
+            yield current.data
+            current = current.prev
