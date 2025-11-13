@@ -75,20 +75,51 @@ class Deque(Generic[T]):
 
     def __iter__(self) -> Iterator[T]:
         """Iterate over elements from front to rear. O(n)"""
-        pass
+        current = self.head
+        while current:
+            yield current.data
+            current = current.next
 
     def __reversed__(self) -> Iterator[T]:
         """Iterate over elements from rear to front. O(n)"""
-        pass
+        current = self.tail
+        while current:
+            yield current.data
+            current = current.prev
 
     def __contains__(self, item: T) -> bool:
         """Check if an item exists in the deque. O(n)"""
-        pass
+        return any(element == item for element in self)
+
+    def __getitem__(self, index: int) -> T:
+        """Return the item at a given position. O(n)
+        Supports negative indexing.
+        Raises:
+            IndexError: If index is out of range.
+        """
+        if not -self._size <= index < self._size:
+            raise IndexError("deque index out of range")
+
+        # Normalize negative indices
+        if index < 0:
+            index += self._size
+
+        current = self.head
+        for _ in range(index):
+            current = current.next
+
+        return current.data
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality with another deque. O(n)"""
+        if not isinstance(other, Deque):
+            return False
+        return list(self) == list(other)
 
     def __str__(self) -> str:
         """Return a string representation of the deque. O(n)"""
-        pass
+        return f"Deque([{', '.join(map(str, self))}])"
 
     def __repr__(self) -> str:
         """Return a string representation of the deque. O(n)"""
-        pass
+        return str(self)
