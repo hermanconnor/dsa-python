@@ -104,6 +104,61 @@ def test_insert_index_out_of_range(populated_list):
         populated_list.insert(-1, 99)
 
 
+def test_delete_by_value_head(populated_list):
+    assert populated_list.delete(1) is True
+
+    assert list(populated_list) == [2, 3, 4]
+    assert populated_list.head.data == 2
+    assert populated_list.head.prev is None
+    assert populated_list._size == 3
+
+
+def test_delete_by_value_tail(populated_list):
+    assert populated_list.delete(4) is True
+    assert list(populated_list) == [1, 2, 3]
+    assert populated_list.tail.data == 3
+    assert populated_list.tail.next is None
+    assert populated_list._size == 3
+
+
+def test_delete_by_value_middle(populated_list):
+    assert populated_list.delete(2) is True
+    assert list(populated_list) == [1, 3, 4]
+
+    node_1 = populated_list.head
+    node_3 = node_1.next
+
+    assert node_1.next.data == 3
+    assert node_3.prev.data == 1
+    assert populated_list._size == 3
+
+
+def test_delete_by_value_not_found(populated_list):
+    assert populated_list.delete(99) is False
+    assert populated_list._size == 4
+
+
+def test_delete_at_index_head(populated_list):
+    deleted_data = populated_list.delete_at_index(0)
+
+    assert deleted_data == 1
+    assert list(populated_list) == [2, 3, 4]
+    assert populated_list._size == 3
+
+
+def test_delete_at_index_tail(populated_list):
+    deleted_data = populated_list.delete_at_index(3)
+
+    assert deleted_data == 4
+    assert list(populated_list) == [1, 2, 3]
+    assert populated_list._size == 3
+
+
+def test_delete_at_index_invalid(populated_list):
+    with pytest.raises(IndexError):
+        populated_list.delete_at_index(4)
+
+
 def test_get_head_tail(empty_list):
     with pytest.raises(IndexError):
         empty_list.get_head()

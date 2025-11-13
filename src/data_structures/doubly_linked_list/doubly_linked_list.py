@@ -86,6 +86,30 @@ class DoublyLinkedList(Generic[T]):
 
         self._size += 1
 
+    def delete(self, data: T) -> bool:
+        """
+        Delete the first occurrence of a value from the list.
+        Returns True if deleted, False if not found.
+        Time complexity: O(n).
+        """
+        current = self.head
+        while current:
+            if current.data == data:
+                self._remove_node(current)
+                return True
+
+            current = current.next
+
+        return False
+
+    def delete_at_index(self, index: int) -> T:
+        """
+        Delete the node at the specified index and return its data.
+        Time complexity: O(n).
+        """
+        node = self._get_node(index)
+        return self._remove_node(node)
+
     def get(self, index: int) -> T:
         """
         Get the data at a specified index. (Used internally by __getitem__)
@@ -144,6 +168,24 @@ class DoublyLinkedList(Generic[T]):
 
         return current
 
+    def _remove_node(self, node: DoublyNode[T]) -> T:
+        """
+        Helper to unlink and remove a node from the list.
+        Time complexity: O(1).
+        """
+        if node.prev:
+            node.prev.next = node.next
+        else:
+            self.head = node.next
+
+        if node.next:
+            node.next.prev = node.prev
+        else:
+            self.tail = node.prev
+
+        self._size -= 1
+        return node.data
+
     def __len__(self) -> int:
         """Support for len(). O(1)."""
         return self._size
@@ -178,7 +220,7 @@ class DoublyLinkedList(Generic[T]):
 
     def __delitem__(self, index: int) -> None:
         """Support for del list[index]. O(n)."""
-        pass
+        self.delete_at_index(index)
 
     def __reversed__(self) -> Iterator[T]:
         """Reverse iterator. O(n) total to iterate through all nodes."""
