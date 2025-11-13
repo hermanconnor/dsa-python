@@ -31,14 +31,34 @@ class DoublyLinkedList(Generic[T]):
         Add a new node at the end of the list.
         Time complexity: O(1).
         """
-        pass
+        new_node = DoublyNode(data)
+
+        if not self.head:
+            self.head = new_node
+            self.tail = new_node
+        else:
+            new_node.prev = self.tail
+            self.tail.next = new_node
+            self.tail = new_node
+
+        self._size += 1
 
     def prepend(self, data: T) -> None:
         """
         Add a new node at the beginning of the list.
         Time complexity: O(1).
         """
-        pass
+        new_node = DoublyNode(data)
+
+        if not self.head:
+            self.head = new_node
+            self.tail = new_node
+        else:
+            new_node.next = self.head
+            self.head.prev = new_node
+            self.head = new_node
+
+        self._size += 1
 
     def _get_node(self, index: int) -> DoublyNode[T]:
         """
@@ -61,7 +81,11 @@ class DoublyLinkedList(Generic[T]):
 
     def __iter__(self) -> Iterator[T]:
         """Forward iterator. O(n) total to iterate through all nodes."""
-        pass
+        current = self.head
+
+        while current:
+            yield current.data
+            current = current.next
 
     def __contains__(self, data: T) -> bool:
         """Support for 'in' operator (data in list). O(n)."""
