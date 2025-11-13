@@ -14,7 +14,7 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 - [x] Stack
 - [x] Queue
 - [x] Linked List (Singly)
-- [ ] Linked List (Doubly)
+- [x] Linked List (Doubly)
 - [ ] Deque
 
 ## 🎯 My Learning Goals

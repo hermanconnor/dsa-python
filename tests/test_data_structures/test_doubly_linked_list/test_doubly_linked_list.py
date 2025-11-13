@@ -215,3 +215,50 @@ def test_len(populated_list, empty_list):
 def test_iter(populated_list):
     data = [item for item in populated_list]
     assert data == [1, 2, 3, 4]
+
+
+def test_contains(populated_list):
+    # Test 'in' operator
+    assert 3 in populated_list
+    assert 99 not in populated_list
+
+
+def test_getitem(populated_list):
+    # Test list[index]
+    assert populated_list[0] == 1
+    assert populated_list[3] == 4
+
+    with pytest.raises(IndexError):
+        _ = populated_list[4]
+
+
+def test_setitem(populated_list):
+    # Test list[index] = data
+    populated_list[1] = 99
+
+    assert list(populated_list) == [1, 99, 3, 4]
+    assert populated_list._get_node(1).data == 99
+
+
+def test_delitem(populated_list):
+    # Test del list[index]
+    del populated_list[1]  # Delete 2
+
+    assert list(populated_list) == [1, 3, 4]
+    assert len(populated_list) == 3
+
+    with pytest.raises(IndexError):
+        del populated_list[3]
+
+
+def test_repr_str(populated_list):
+    # Test __repr__
+    assert repr(populated_list) == "DoublyLinkedList([1, 2, 3, 4])"
+    # Test __str__
+    assert str(populated_list) == "[1, 2, 3, 4]"
+
+
+def test_reversed(populated_list):
+    # Test reverse iteration
+    data = [item for item in reversed(populated_list)]
+    assert data == [4, 3, 2, 1]

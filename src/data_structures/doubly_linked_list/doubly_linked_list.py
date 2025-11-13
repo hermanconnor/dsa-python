@@ -198,6 +198,34 @@ class DoublyLinkedList(Generic[T]):
         """
         return self._size == 0
 
+    def to_list_forward(self) -> List[T]:
+        """
+        Convert the list to a standard Python list (head → tail).
+        Time complexity: O(n).
+        """
+        result = []
+        current = self.head
+
+        while current:
+            result.append(current.data)
+            current = current.next
+
+        return result
+
+    def to_list_backward(self) -> List[T]:
+        """
+        Convert the list to a standard Python list (tail → head).
+        Time complexity: O(n).
+        """
+        result = []
+        current = self.tail
+
+        while current:
+            result.append(current.data)
+            current = current.prev
+
+        return result
+
     def _get_node(self, index: int) -> DoublyNode[T]:
         """
         Return the node at the specified index.
@@ -253,11 +281,11 @@ class DoublyLinkedList(Generic[T]):
 
     def __str__(self) -> str:
         """Readable string representation. O(n)."""
-        pass
+        return f"[{', '.join(map(str, self.to_list_forward()))}]"
 
     def __repr__(self) -> str:
         """Official string representation of the doubly linked list object, useful for debugging. O(n)."""
-        pass
+        return f"DoublyLinkedList([{', '.join(map(repr, self.to_list_forward()))}])"
 
     def __iter__(self) -> Iterator[T]:
         """Forward iterator. O(n) total to iterate through all nodes."""
@@ -269,7 +297,7 @@ class DoublyLinkedList(Generic[T]):
 
     def __contains__(self, data: T) -> bool:
         """Support for 'in' operator (data in list). O(n)."""
-        pass
+        return self.find(data) != -1
 
     def __getitem__(self, index: int) -> T:
         """Support for list[index] access. O(n)."""
@@ -277,7 +305,8 @@ class DoublyLinkedList(Generic[T]):
 
     def __setitem__(self, index: int, data: T) -> None:
         """Support for list[index] = data assignment. O(n)."""
-        pass
+        node = self._get_node(index)
+        node.data = data
 
     def __delitem__(self, index: int) -> None:
         """Support for del list[index]. O(n)."""
