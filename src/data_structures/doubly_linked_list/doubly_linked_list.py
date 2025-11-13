@@ -21,7 +21,7 @@ class DoublyLinkedList(Generic[T]):
     A doubly linked list implementation.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.head: Optional[DoublyNode[T]] = None
         self.tail: Optional[DoublyNode[T]] = None
         self._size: int = 0
