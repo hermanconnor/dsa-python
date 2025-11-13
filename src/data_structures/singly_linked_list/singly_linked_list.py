@@ -1,3 +1,9 @@
+from __future__ import annotations
+from typing import TypeVar, Generic, Optional, Iterator, List
+
+T = TypeVar('T')
+
+
 class Node:
     """A single node in the linked list."""
 

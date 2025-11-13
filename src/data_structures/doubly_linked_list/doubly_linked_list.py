@@ -4,7 +4,7 @@ from typing import Optional, Iterator, Generic, TypeVar, List
 T = TypeVar('T')
 
 
-class DoublyNode:
+class DoublyNode(Generic[T]):
     """A node in a doubly linked list."""
 
     def __init__(self, data: T):
