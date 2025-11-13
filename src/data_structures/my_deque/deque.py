@@ -58,14 +58,40 @@ class Deque(Generic[T]):
         Raises:
             IndexError: If the deque is empty.
         """
-        pass
+        if self.is_empty():
+            raise IndexError("popleft from empty deque")
+
+        data = self.head.data
+
+        if self._size == 1:
+            self.head = None
+            self.tail = None
+        else:
+            self.head = self.head.next
+            self.head.prev = None
+
+        self._size -= 1
+        return data
 
     def pop(self) -> T:
         """Remove and return the rear item from the deque. O(1)
         Raises:
             IndexError: If the deque is empty.
         """
-        pass
+        if self.is_empty():
+            raise IndexError("pop from empty deque")
+
+        data = self.tail.data
+
+        if self._size == 1:
+            self.head = None
+            self.tail = None
+        else:
+            self.tail = self.tail.prev
+            self.tail.next = None
+
+        self._size -= 1
+        return data
 
     def peek_front(self) -> T:
         """Return the front item without removing it. O(1)

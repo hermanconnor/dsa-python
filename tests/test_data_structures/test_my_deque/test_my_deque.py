@@ -44,3 +44,30 @@ def test_len_increments(empty_deque):
     empty_deque.append(10)
 
     assert len(empty_deque) == 2
+
+
+def test_popleft(populated_deque):
+    assert populated_deque.popleft() == 10
+    assert list(populated_deque) == [20, 30]
+    assert len(populated_deque) == 2
+
+
+def test_pop(populated_deque):
+    assert populated_deque.pop() == 30
+    assert list(populated_deque) == [10, 20]
+    assert len(populated_deque) == 2
+
+
+def test_popleft_until_empty(empty_deque):
+    empty_deque.appendleft(1)
+
+    assert empty_deque.popleft() == 1
+    assert empty_deque.is_empty()
+
+
+def test_popping_from_empty_raises(empty_deque):
+    with pytest.raises(IndexError):
+        empty_deque.popleft()
+
+    with pytest.raises(IndexError):
+        empty_deque.pop()
