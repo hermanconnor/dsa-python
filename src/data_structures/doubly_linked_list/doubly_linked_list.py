@@ -60,12 +60,89 @@ class DoublyLinkedList(Generic[T]):
 
         self._size += 1
 
+    def insert(self, index: int, data: T) -> None:
+        """
+        Insert a new node at the specified index.
+        Time complexity: O(n).
+        """
+        if index < 0 or index > self._size:
+            raise IndexError("Index out of range")
+
+        if index == 0:
+            self.prepend(data)
+            return
+
+        if index == self._size:
+            self.append(data)
+            return
+
+        current = self._get_node(index)
+        new_node = DoublyNode(data)
+
+        new_node.prev = current.prev
+        new_node.next = current
+        current.prev.next = new_node
+        current.prev = new_node
+
+        self._size += 1
+
+    def get(self, index: int) -> T:
+        """
+        Get the data at a specified index. (Used internally by __getitem__)
+        Time complexity: O(n).
+        """
+        return self._get_node(index).data
+
+    def get_head(self) -> T:
+        """
+        Return the data of the head node.
+        Time complexity: O(1).
+        """
+        if not self.head:
+            raise IndexError("List is empty")
+
+        return self.head.data
+
+    def get_tail(self) -> T:
+        """
+        Return the data of the tail node.
+        Time complexity: O(1).
+        """
+        if not self.tail:
+            raise IndexError("List is empty")
+
+        return self.tail.data
+
     def _get_node(self, index: int) -> DoublyNode[T]:
         """
         Return the node at the specified index.
         Time complexity: O(n) in the worst case (O(n/2) average).
         """
-        pass
+        if index < 0 or index >= self._size:
+            raise IndexError("Index out of range")
+
+        current: Optional[DoublyNode[T]] = None
+
+        # Traverse from the closest end for efficiency
+        if index <= self._size // 2:
+            current = self.head
+            for _ in range(index):
+                if current is None:
+                    break  # Safety break, should not be reached
+                current = current.next
+        else:
+            current = self.tail
+            for _ in range(self._size - index - 1):
+                if current is None:
+                    break  # Safety break, should not be reached
+                current = current.prev
+
+        # This check is mainly to satisfy type-checkers (like mypy)
+        if current is None:
+            raise RuntimeError(
+                "Internal list error: Node not found where expected.")
+
+        return current
 
     def __len__(self) -> int:
         """Support for len(). O(1)."""
@@ -93,7 +170,7 @@ class DoublyLinkedList(Generic[T]):
 
     def __getitem__(self, index: int) -> T:
         """Support for list[index] access. O(n)."""
-        pass
+        return self.get(index)
 
     def __setitem__(self, index: int, data: T) -> None:
         """Support for list[index] = data assignment. O(n)."""
