@@ -27,11 +27,31 @@ class Deque(Generic[T]):
 
     def appendleft(self, item: T) -> None:
         """Add an item to the front of the deque. O(1)"""
-        pass
+        new_node = Node(item)
+
+        if self.is_empty():
+            self.head = new_node
+            self.tail = new_node
+        else:
+            new_node.next = self.head
+            self.head.prev = new_node
+            self.head = new_node
+
+        self._size += 1
 
     def append(self, item: T) -> None:
         """Add an item to the rear of the deque. O(1)"""
-        pass
+        new_node = Node(item)
+
+        if self.is_empty():
+            self.head = new_node
+            self.tail = new_node
+        else:
+            new_node.prev = self.tail
+            self.tail.next = new_node
+            self.tail = new_node
+
+        self._size += 1
 
     def popleft(self) -> T:
         """Remove and return the front item from the deque. O(1)
@@ -63,11 +83,13 @@ class Deque(Generic[T]):
 
     def is_empty(self) -> bool:
         """Check whether the deque is empty. O(1)"""
-        pass
+        return self._size == 0
 
     def clear(self) -> None:
         """Remove all elements from the deque. O(1)"""
-        pass
+        self.head = None
+        self.tail = None
+        self._size = 0
 
     def __len__(self) -> int:
         """Return the number of elements in the deque. O(1)"""
@@ -118,7 +140,7 @@ class Deque(Generic[T]):
 
     def __str__(self) -> str:
         """Return a string representation of the deque. O(n)"""
-        return f"Deque([{', '.join(map(str, self))}])"
+        return f"Deque([front: {', '.join(map(str, self))} :rear])"
 
     def __repr__(self) -> str:
         """Return a string representation of the deque. O(n)"""
