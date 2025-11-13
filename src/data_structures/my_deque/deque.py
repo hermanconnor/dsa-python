@@ -98,14 +98,20 @@ class Deque(Generic[T]):
         Raises:
             IndexError: If the deque is empty.
         """
-        pass
+        if self.is_empty():
+            raise IndexError("peek_front from empty deque")
+
+        return self.head.data
 
     def peek_rear(self) -> T:
         """Return the rear item without removing it. O(1)
         Raises:
             IndexError: If the deque is empty.
         """
-        pass
+        if self.is_empty():
+            raise IndexError("peek_rear from empty deque")
+
+        return self.tail.data
 
     def is_empty(self) -> bool:
         """Check whether the deque is empty. O(1)"""
