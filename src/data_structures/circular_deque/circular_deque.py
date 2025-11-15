@@ -61,7 +61,21 @@ class CircularDeque(Generic[T]):
         Space Complexity: O(1)
         Raises: IndexError if deque is empty
         """
-        pass
+        if self.is_empty():
+            raise IndexError("pop from empty deque")
+
+        item = self._data[self._front]
+        # We assert item is not None because we check self.is_empty()
+        assert item is not None
+
+        # Set the old slot to None for proper garbage collection
+        self._data[self._front] = None
+        self._front = (self._front + 1) % self._capacity
+        self._size -= 1
+
+        self._check_and_shrink()
+
+        return item
 
     def pop(self) -> T:
         """
@@ -71,7 +85,22 @@ class CircularDeque(Generic[T]):
         Space Complexity: O(1)
         Raises: IndexError if deque is empty
         """
-        pass
+        if self.is_empty():
+            raise IndexError("pop from empty deque")
+
+        # Calculate back index (of the element to be removed)
+        back_index = (self._front + self._size - 1) % self._capacity
+
+        item = self._data[back_index]
+        assert item is not None
+
+        # Set the old slot to None for proper garbage collection
+        self._data[back_index] = None
+        self._size -= 1
+
+        self._check_and_shrink()
+
+        return item
 
     def peek_front(self) -> T:
         """
@@ -131,6 +160,23 @@ class CircularDeque(Generic[T]):
         self._data = new_data
         self._front = 0
         self._capacity = new_capacity
+
+    def _check_and_shrink(self) -> None:
+        """
+        Checks if the deque should shrink and performs the resize operation.
+        Shrinks if capacity is 4x size, and if capacity is larger than MIN_CAPACITY.
+        """
+        # Shrink if size is 25% or less of capacity AND capacity is greater than min
+        if self._size > 0 and \
+           self._size <= self._capacity // 4 and \
+           self._capacity > self.MIN_CAPACITY:
+
+            # Ensure new capacity doesn't fall below MIN_CAPACITY
+            new_capacity = max(self._capacity // 2, self.MIN_CAPACITY)
+
+            # Only resize if the capacity is actually changing
+            if new_capacity < self._capacity:
+                self._resize(new_capacity)
 
     def __len__(self) -> int:
         """

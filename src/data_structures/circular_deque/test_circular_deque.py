@@ -78,6 +78,69 @@ class TestAppendOperations:
         assert deque.peek_rear() == 2
 
 
+class TestPopOperations:
+    """Test pop operations at both ends."""
+
+    def test_pop_right_single(self):
+        """Test popping a single element from the right."""
+        deque: CircularDeque[int] = CircularDeque()
+
+        deque.append(1)
+        value = deque.pop()
+
+        assert value == 1
+        assert len(deque) == 0
+        assert deque.is_empty()
+
+    def test_pop_left_single(self):
+        """Test popping a single element from the left."""
+        deque: CircularDeque[int] = CircularDeque()
+
+        deque.appendleft(1)
+        value = deque.popleft()
+
+        assert value == 1
+        assert deque.is_empty()
+
+    def test_pop_right_multiple(self):
+        """Test popping multiple elements from the right."""
+        deque: CircularDeque[int] = CircularDeque()
+
+        for i in range(5):
+            deque.append(i)
+
+        values = [deque.pop() for _ in range(5)]
+
+        assert values == [4, 3, 2, 1, 0]
+        assert deque.is_empty()
+
+    def test_pop_left_multiple(self):
+        """Test popping multiple elements from the left."""
+        deque: CircularDeque[int] = CircularDeque()
+
+        for i in range(5):
+            deque.append(i)
+
+        values = [deque.popleft() for _ in range(5)]
+
+        assert values == [0, 1, 2, 3, 4]
+        assert deque.is_empty()
+
+    def test_pop_both_ends(self):
+        """Test popping from both ends."""
+        deque: CircularDeque[int] = CircularDeque()
+
+        for i in range(6):
+            deque.append(i)
+
+        left = deque.popleft()
+        right = deque.pop()
+
+        assert left == 0
+        assert right == 5
+        assert len(deque) == 4
+
+
 class TestStringRepresentation:
     """Test string representation methods."""
 
