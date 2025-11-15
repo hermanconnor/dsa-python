@@ -1,5 +1,5 @@
 import pytest
-from src.data_structures.my_queue.queue import Queue
+from my_queue import Queue
 
 
 @pytest.fixture

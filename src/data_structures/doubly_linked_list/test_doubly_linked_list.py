@@ -1,5 +1,5 @@
 import pytest
-from src.data_structures.doubly_linked_list.doubly_linked_list import DoublyNode, DoublyLinkedList
+from doubly_linked_list import DoublyNode, DoublyLinkedList
 
 
 @pytest.fixture

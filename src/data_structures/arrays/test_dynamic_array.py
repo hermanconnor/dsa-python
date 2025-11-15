@@ -1,5 +1,5 @@
 import pytest
-from src.data_structures.arrays.dynamic_array import DynamicArray
+from dynamic_array import DynamicArray
 
 
 @pytest.fixture

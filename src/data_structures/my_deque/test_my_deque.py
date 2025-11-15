@@ -1,5 +1,5 @@
 import pytest
-from src.data_structures.my_deque.deque import Node, Deque
+from deque import Deque
 
 
 @pytest.fixture

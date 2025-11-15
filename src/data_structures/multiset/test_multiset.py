@@ -1,6 +1,6 @@
 import pytest
 from collections import Counter
-from src.data_structures.multiset.multiset import Multiset
+from multiset import Multiset
 
 
 @pytest.fixture
