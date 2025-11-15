@@ -31,7 +31,12 @@ class CircularDeque(Generic[T]):
         Time Complexity: O(1) amortized, O(n) worst case when resizing
         Space Complexity: O(1) amortized
         """
-        pass
+        if self._size == self._capacity:
+            self._resize(2 * self._capacity)
+
+        self._front = (self._front - 1) % self._capacity
+        self._data[self._front] = item
+        self._size += 1
 
     def append(self, item: T) -> None:
         """
@@ -40,7 +45,13 @@ class CircularDeque(Generic[T]):
         Time Complexity: O(1) amortized, O(n) worst case when resizing
         Space Complexity: O(1) amortized
         """
-        pass
+        if self._size == self._capacity:
+            self._resize(2 * self._capacity)
+
+        # Calculate back index (where the new item goes)
+        back_index = (self._front + self._size) % self._capacity
+        self._data[back_index] = item
+        self._size += 1
 
     def popleft(self) -> T:
         """
@@ -70,7 +81,13 @@ class CircularDeque(Generic[T]):
         Space Complexity: O(1)
         Raises: IndexError if deque is empty
         """
-        pass
+        if self.is_empty():
+            raise IndentationError("peek from empty deque")
+
+        item = self._data[self._front]
+        assert item is not None
+
+        return item
 
     def peek_rear(self) -> T:
         """
@@ -80,7 +97,14 @@ class CircularDeque(Generic[T]):
         Space Complexity: O(1)
         Raises: IndexError if deque is empty
         """
-        pass
+        if self.is_empty():
+            raise IndexError("peek from empty deque")
+
+        back_index = (self._front + self._size - 1) % self._capacity
+        item = self._data[back_index]
+        assert item is not None
+
+        return item
 
     def is_empty(self) -> bool:
         """
@@ -98,7 +122,15 @@ class CircularDeque(Generic[T]):
         Time Complexity: O(n) where n is the number of elements
         Space Complexity: O(new_capacity)
         """
-        pass
+        new_data: List[Optional[T]] = [None] * new_capacity
+
+        for i in range(self._size):
+            old_index = (self._front + i) % self._capacity
+            new_data[i] = self._data[old_index]
+
+        self._data = new_data
+        self._front = 0
+        self._capacity = new_capacity
 
     def __len__(self) -> int:
         """
