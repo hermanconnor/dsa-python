@@ -1,4 +1,4 @@
-from typing import Generic, TypeVar, List, Optional
+from typing import Generic, TypeVar, List, Optional, Iterator
 
 T = TypeVar('T')
 
@@ -9,109 +9,135 @@ class CircularDeque(Generic[T]):
       Supports O(1) operations at both ends with dynamic resizing.
     """
 
-    def __init__(self, capacity: int = 8) -> None:
+    MIN_CAPACITY = 8
+
+    def __init__(self, capacity: int = MIN_CAPACITY) -> None:
         """
-        Initialize the deque with a given capacity.
+        Initialize the deque with a given capacity. Capacity will be 
+        automatically enforced to be at least MIN_CAPACITY.
+
+        Time Complexity: O(1)
+        Space Complexity: O(capacity)
         """
-        self._capacity = capacity
-        self._data: List[Optional[T]] = [None] * capacity
+        self._capacity = max(capacity, self.MIN_CAPACITY)
+        self._data: List[Optional[T]] = [None] * self._capacity
         self._front = 0
         self._size = 0
 
-        def appendleft(self, item: T) -> None:
-            """
-            Add an item to the front of the deque.
+    def appendleft(self, item: T) -> None:
+        """
+        Add an item to the front of the deque.
 
-            Time Complexity: O(1) amortized, O(n) worst case when resizing
-            Space Complexity: O(1) amortized
-            """
-            pass
+        Time Complexity: O(1) amortized, O(n) worst case when resizing
+        Space Complexity: O(1) amortized
+        """
+        pass
 
-        def append(self, item: T) -> None:
-            """
-            Add an item to the back of the deque.
+    def append(self, item: T) -> None:
+        """
+        Add an item to the back of the deque.
 
-            Time Complexity: O(1) amortized, O(n) worst case when resizing
-            Space Complexity: O(1) amortized
-            """
-            pass
+        Time Complexity: O(1) amortized, O(n) worst case when resizing
+        Space Complexity: O(1) amortized
+        """
+        pass
 
-        def popleft(self) -> T:
-            """
-            Remove and return an item from the front of the deque.
+    def popleft(self) -> T:
+        """
+        Remove and return an item from the front of the deque.
 
-            Time Complexity: O(1) amortized
-            Space Complexity: O(1)
-            Raises: IndexError if deque is empty
-            """
-            pass
+        Time Complexity: O(1) amortized
+        Space Complexity: O(1)
+        Raises: IndexError if deque is empty
+        """
+        pass
 
-        def pop(self) -> T:
-            """
-            Remove and return an item from the back of the deque.
+    def pop(self) -> T:
+        """
+        Remove and return an item from the back of the deque.
 
-            Time Complexity: O(1) amortized
-            Space Complexity: O(1)
-            Raises: IndexError if deque is empty
-            """
-            pass
+        Time Complexity: O(1) amortized
+        Space Complexity: O(1)
+        Raises: IndexError if deque is empty
+        """
+        pass
 
-        def peek_front(self) -> T:
-            """
-            Return the front item without removing it.
+    def peek_front(self) -> T:
+        """
+        Return the front item without removing it.
 
-            Time Complexity: O(1)
-            Space Complexity: O(1)
-            Raises: IndexError if deque is empty
-            """
-            pass
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        Raises: IndexError if deque is empty
+        """
+        pass
 
-        def peek_rear(self) -> T:
-            """
-            Return the back item without removing it.
+    def peek_rear(self) -> T:
+        """
+        Return the back item without removing it.
 
-            Time Complexity: O(1)
-            Space Complexity: O(1)
-            Raises: IndexError if deque is empty
-            """
-            pass
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        Raises: IndexError if deque is empty
+        """
+        pass
 
-        def is_empty(self) -> bool:
-            """
-            Check if the deque is empty.
+    def is_empty(self) -> bool:
+        """
+        Check if the deque is empty.
 
-            Time Complexity: O(1)
-            Space Complexity: O(1)
-            """
-            pass
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
+        return self._size == 0
 
-        def _resize(self, new_capacity: int) -> None:
-            """
-            Resize the internal array to a new capacity.
+    def _resize(self, new_capacity: int) -> None:
+        """
+        Resize the internal array to a new capacity.
 
-            Time Complexity: O(n) where n is the number of elements
-            Space Complexity: O(new_capacity)
-            """
-            pass
+        Time Complexity: O(n) where n is the number of elements
+        Space Complexity: O(new_capacity)
+        """
+        pass
 
-        def __len__(self) -> int:
-            """
-            Return the number of items in the deque.
+    def __len__(self) -> int:
+        """
+        Return the number of items in the deque.
 
-            Time Complexity: O(1)
-            Space Complexity: O(1)
-            """
-            pass
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
+        return self._size
 
-        def __str__(self) -> str:
-            """
-            String representation of the deque.
+    def __iter__(self) -> Iterator[T]:
+        """Allow iteration over the deque elements from front to back."""
+        for i in range(self._size):
+            item = self._data[(self._front + i) % self._capacity]
+            assert item is not None
+            yield item
 
-            Time Complexity: O(n)
-            Space Complexity: O(n)
-            """
-            pass
+    def __getitem__(self, index: int) -> T:
+        """
+        Support indexing (e.g., deque[0]).
+        Time Complexity: O(1)
+        """
+        # Allow negative indexing
+        if index < 0:
+            index += self._size
 
-        def __repr__(self) -> str:
-            """Developer-friendly representation of the circular deque O(n)."""
-            pass
+        if not (0 <= index < self._size):
+            raise IndexError("Deque index out of range")
+
+        array_index = (self._front + index) % self._capacity
+        item = self._data[array_index]
+        assert item is not None
+        return item
+
+    def __str__(self) -> str:
+        """String representation: Deque([item1, item2, ...])"""
+        items_str = ", ".join(repr(item) for item in self)
+        return f"Deque([{items_str}])"
+
+    def __repr__(self) -> str:
+        """Developer-friendly representation of the circular deque O(n)."""
+        return self.__str__()
