@@ -1,7 +1,9 @@
-from typing import List, Optional, Any
+from typing import List, Optional, Any, TypeVar, Generic
+
+T = TypeVar('T')
 
 
-class CircularQueue:
+class CircularQueue(Generic[T]):
     def __init__(self, capacity: int) -> None:
         """
         Initialize circular queue with given capacity.
@@ -13,7 +15,7 @@ class CircularQueue:
             raise ValueError("Capacity must be positive.")
 
         self.capacity: int = capacity
-        self.queue: List[Optional[Any]] = [None] * capacity
+        self.queue: List[Optional[T]] = [None] * capacity
         self.front: int = 0
         self.size: int = 0
 
@@ -25,7 +27,7 @@ class CircularQueue:
         """Check if queue is full. Time Complexity: O(1)"""
         return self.size == self.capacity
 
-    def enqueue(self, item: Any) -> bool:
+    def enqueue(self, item: T) -> bool:
         """Add item to the rear of the queue.Time Complexity: O(1)"""
         if self.is_full():
             raise IndexError("Queue is full (capacity reached)")
@@ -37,7 +39,7 @@ class CircularQueue:
         self.size += 1
         return True
 
-    def dequeue(self) -> Any:
+    def dequeue(self) -> T:
         """Remove and return item from front of queue.Time Complexity: O(1)"""
         if self.is_empty():
             raise IndexError("Queue is empty")
@@ -53,7 +55,7 @@ class CircularQueue:
 
         return item
 
-    def peek(self) -> Any:
+    def peek(self) -> T:
         """Return front item without removing it.Time Complexity: O(1)"""
         if self.is_empty():
             raise IndexError("Queue is empty")
@@ -85,5 +87,5 @@ class CircularQueue:
         """
         Developer-friendly representation of the circular queue.
         """
-        return (f"CircularQueue(capacity={self.capacity}, size={self.size}, "
+        return (f"CircularQueue[T](capacity={self.capacity}, size={self.size}, "
                 f"front_index={self.front})")
