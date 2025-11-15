@@ -14,10 +14,11 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 - [x] Stack
 - [x] Queue
 - [x] Queue (Circular)
+- [ ] Queue (Two Stacks)
 - [x] Linked List (Singly)
 - [x] Linked List (Doubly)
 - [x] Deque
-- [ ] Deque (Circular)
+- [x] Deque (Circular)
 
 ## 🎯 My Learning Goals
 
