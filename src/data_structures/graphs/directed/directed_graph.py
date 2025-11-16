@@ -55,11 +55,67 @@ class DirectedGraph(Generic[V, W]):
 
         return True
 
-    def remove_vertex(self):
-        pass
+    def remove_vertex(self, vertex: V) -> bool:
+        """
+        Remove a vertex and all edges connected to it.
 
-    def remove_edge(self):
-        pass
+        Time Complexity: O(V + E) where V is vertices and E is edges
+
+        Returns:
+            bool: True if vertex was removed, False if it didn't exist
+        """
+        if vertex not in self.graph:
+            return False
+
+        # 1. Remove all outgoing edges and update in-degrees of neighbors
+        for neighbor, _ in self.graph[vertex]:
+            if neighbor in self.in_degree_counts:
+                self.in_degree_counts[neighbor] -= 1
+
+        # 2. Remove all edges pointing *to* this vertex, and update in-degrees of this vertex
+        vertices_to_check = list(self.graph.keys())
+        for v in vertices_to_check:
+            # Skip the vertex being removed, which will be deleted in the next step
+            if v == vertex:
+                continue
+
+            self.graph[v] = [
+                (neighbor, weight) for neighbor, weight in self.graph[v] if neighbor != vertex
+            ]
+
+        # 3. Remove the vertex from the graph and in_degrees
+        del self.graph[vertex]
+        del self.in_degree_counts[vertex]
+
+        return True
+
+    def remove_edge(self, from_vertex: V, to_vertex: V) -> bool:
+        """
+        Remove the directed edge from from_vertex to to_vertex.
+
+        Time Complexity: O(E_v) where E_v is the number of edges from from_vertex
+
+        Returns:
+            bool: True if edge was removed, False if it didn't exist
+        """
+        if from_vertex not in self.graph:
+            return False
+
+        original_length = len(self.graph[from_vertex])
+
+        # Rebuild the list without the target edge
+        self.graph[from_vertex] = [
+            (neighbor, weight) for neighbor, weight in self.graph[from_vertex] if neighbor != to_vertex
+        ]
+
+        # Update in-degree count only if an edge was actually removed
+        if len(self.graph[from_vertex]) < original_length:
+            if to_vertex in self.in_degree_counts:
+                self.in_degree_counts[to_vertex] -= 1
+
+            return True
+
+        return False
 
     def get_neighbors(self):
         pass
@@ -86,11 +142,32 @@ class DirectedGraph(Generic[V, W]):
 
         return edges
 
-    def has_edge(self):
-        pass
+    def has_edge(self, from_vertex: V, to_vertex: V) -> bool:
+        """
+        Check if there's a directed edge from from_vertex to to_vertex.
 
-    def get_edge_weight(self):
-        pass
+        Time Complexity: O(E_v) where E_v is the number of edges from from_vertex
+        """
+        if from_vertex not in self.graph:
+            return False
+
+        return any(neighbor == to_vertex for neighbor, _ in self.graph[from_vertex])
+
+    def get_edge_weight(self, from_vertex: V, to_vertex: V) -> Optional[W] | None:
+        """
+        Get the weight of the edge from from_vertex to to_vertex.
+
+        Time Complexity: O(E_v) where E_v is the number of edges from from_vertex
+
+        Returns:
+            weight or None: Weight if edge exists, None otherwise
+        """
+        if from_vertex in self.graph:
+            for neighbor, weight in self.graph[from_vertex]:
+                if neighbor == to_vertex:
+                    return weight
+
+        return None
 
     def update_edge_weight(self):
         pass

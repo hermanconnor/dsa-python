@@ -24,6 +24,176 @@ class TestDirectedGraphInitialization:
         assert repr(g) == "DirectedGraph(vertices=2, edges=1)"
 
 
+class TestVertexOperations:
+    """Test vertex addition and removal."""
+
+    def test_add_single_vertex(self):
+        """Test adding a single vertex."""
+        g = DirectedGraph()
+
+        g.add_vertex('A')
+
+        assert 'A' in g.get_vertices()
+        assert not g.is_empty()
+
+    def test_add_multiple_vertices(self):
+        """Test adding multiple vertices."""
+        g = DirectedGraph()
+
+        vertices = ['A', 'B', 'C', 'D']
+        for v in vertices:
+            g.add_vertex(v)
+
+        assert set(g.get_vertices()) == set(vertices)
+
+    def test_add_duplicate_vertex(self):
+        """Test that adding duplicate vertex doesn't cause issues."""
+        g = DirectedGraph()
+
+        g.add_vertex('A')
+        g.add_vertex('A')
+
+        assert g.get_vertices().count('A') == 1
+
+    def test_remove_vertex(self):
+        """Test removing a vertex."""
+        g = DirectedGraph()
+
+        g.add_vertex('A')
+        result = g.remove_vertex('A')
+
+        assert result is True
+        assert 'A' not in g.get_vertices()
+
+    def test_remove_nonexistent_vertex(self):
+        """Test removing a vertex that doesn't exist."""
+        g = DirectedGraph()
+
+        result = g.remove_vertex('Z')
+
+        assert result is False
+
+    def test_remove_vertex_removes_connected_edges(self):
+        """Test that removing a vertex removes all connected edges."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'B')
+        g.remove_vertex('B')
+
+        assert 'B' not in g.get_vertices()
+        assert not g.has_edge('A', 'B')
+        assert not g.has_edge('C', 'B')
+        # A and C should still exist
+        assert 'A' in g.get_vertices()
+        assert 'C' in g.get_vertices()
+
+
+class TestEdgeOperations:
+    """Test edge addition, removal, and queries."""
+
+    def test_add_edge(self):
+        """Test adding an edge."""
+        g = DirectedGraph()
+
+        result = g.add_edge('A', 'B')
+
+        assert result is True
+        assert g.has_edge('A', 'B')
+
+    def test_add_edge_creates_vertices(self):
+        """Test that adding an edge creates vertices if they don't exist."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+
+        assert 'A' in g.get_vertices()
+        assert 'B' in g.get_vertices()
+
+    def test_add_edge_with_weight(self):
+        """Test adding a weighted edge."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B', 5.5)
+
+        assert g.get_edge_weight('A', 'B') == 5.5
+
+    def test_add_duplicate_edge(self):
+        """Test that duplicate edges are prevented."""
+        g = DirectedGraph()
+
+        result1 = g.add_edge('A', 'B')
+        result2 = g.add_edge('A', 'B')
+
+        assert result1 is True
+        assert result2 is False
+        # Should only have one edge
+        assert len(g.get_edges()) == 1
+
+    def test_directed_edge(self):
+        """Test that edges are directed."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+
+        assert g.has_edge('A', 'B')
+        assert not g.has_edge('B', 'A')
+
+    def test_remove_edge(self):
+        """Test removing an edge."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        result = g.remove_edge('A', 'B')
+
+        assert result is True
+        assert not g.has_edge('A', 'B')
+
+    def test_remove_nonexistent_edge(self):
+        """Test removing an edge that doesn't exist."""
+        g = DirectedGraph()
+
+        g.add_vertex('A')
+        g.add_vertex('B')
+        result = g.remove_edge('A', 'B')
+
+        assert result is False
+
+    def test_has_edge(self):
+        """Test edge existence checking."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+
+        assert g.has_edge('A', 'B')
+        assert not g.has_edge('B', 'A')
+        assert not g.has_edge('A', 'C')
+
+    def test_get_edge_weight(self):
+        """Test getting edge weight."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B', 10)
+
+        assert g.get_edge_weight('A', 'B') == 10
+        assert g.get_edge_weight('B', 'A') is None
+
+    def test_get_edges(self):
+        """Test getting all edges."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B', 1)
+        g.add_edge('B', 'C', 2)
+        g.add_edge('C', 'A', 3)
+        edges = g.get_edges()
+
+        assert len(edges) == 3
+        assert ('A', 'B', 1) in edges
+        assert ('B', 'C', 2) in edges
+        assert ('C', 'A', 3) in edges
+
+
 class TestGraphOperations:
     """Test graph-level operations."""
 
