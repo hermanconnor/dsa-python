@@ -1,7 +1,8 @@
+from __future__ import annotations
 from collections import defaultdict, deque
 from typing import (
     Any, Dict, List, Optional, Set, Tuple,
-    TypeVar, Hashable, Generic, cast
+    TypeVar, Hashable, Generic, Deque
 )
 
 V = TypeVar('V', bound=Hashable)
@@ -117,8 +118,19 @@ class DirectedGraph(Generic[V, W]):
 
         return False
 
-    def get_neighbors(self):
-        pass
+    def get_neighbors(self, vertex: V) -> List[Tuple[V, W]]:
+        """
+        Get all neighbors of a vertex with their weights.
+
+        Time Complexity: O(1)
+
+        Raises:
+            ValueError: If vertex not in graph
+        """
+        if vertex not in self.graph:
+            raise ValueError(f"Vertex {vertex} not in graph")
+
+        return self.graph[vertex]
 
     def get_vertices(self) -> List[V]:
         """
@@ -169,20 +181,110 @@ class DirectedGraph(Generic[V, W]):
 
         return None
 
-    def update_edge_weight(self):
-        pass
+    def update_edge_weight(self, from_vertex: V, to_vertex: V, new_weight: W) -> bool:
+        """
+        Update the weight of an existing edge.
 
-    def in_degree(self):
-        pass
+        Time Complexity: O(E_v) where E_v is the number of edges from from_vertex
 
-    def out_degree(self):
-        pass
+        Returns:
+            bool: True if edge was updated, False if edge doesn't exist
+        """
+        if from_vertex in self.graph:
+            for i, (neighbor, _) in enumerate(self.graph[from_vertex]):
+                if neighbor == to_vertex:
+                    self.graph[from_vertex][i] = (neighbor, new_weight)
+                    return True
 
-    def dfs(self):
-        pass
+        return False
 
-    def bfs(self):
-        pass
+    def in_degree(self, vertex: V) -> int:
+        """
+        Calculate the in-degree of a vertex (number of incoming edges).
+
+        Time Complexity: O(1)
+
+        Raises:
+            ValueError: If vertex not in graph
+        """
+        if vertex not in self.graph:
+            raise ValueError(f"Vertex {vertex} not in graph")
+
+        return self.in_degree_counts[vertex]
+
+    def out_degree(self, vertex: V) -> int:
+        """
+        Calculate the out-degree of a vertex (number of outgoing edges).
+
+        Time Complexity: O(1)
+
+        Raises:
+            ValueError: If vertex not in graph
+        """
+        if vertex not in self.graph:
+            raise ValueError(f"Vertex {vertex} not in graph")
+
+        return len(self.graph[vertex])
+
+    def dfs(self, start_vertex: V) -> List[V]:
+        """
+        Depth-First Search traversal starting from start_vertex (iterative).
+        Returns list of vertices in DFS order.
+
+        Time Complexity: O(V + E)
+
+        Raises:
+            ValueError: If start_vertex not in graph
+        """
+        if start_vertex not in self.graph:
+            raise ValueError(f"Vertex {start_vertex} not in graph")
+
+        visited: Set[V] = set()
+        stack = [start_vertex]
+        result = []
+
+        while stack:
+            vertex = stack.pop()
+
+            if vertex not in visited:
+                visited.add(vertex)
+                result.append(vertex)
+                # Add neighbors in reverse to maintain left-to-right order
+                for neighbor, _ in reversed(self.graph[vertex]):
+                    if neighbor not in visited:
+                        stack.append(neighbor)
+
+        return result
+
+    def bfs(self, start_vertex: V) -> List[V]:
+        """
+        Breadth-First Search traversal starting from start_vertex.
+        Returns list of vertices in BFS order.
+
+        Time Complexity: O(V + E)
+
+        Raises:
+            ValueError: If start_vertex not in graph
+        """
+        if start_vertex not in self.graph:
+            raise ValueError(f"Vertex {start_vertex} not in graph")
+
+        visited: Set[V] = set()
+        queue: Deque[V] = deque([start_vertex])
+        result = []
+
+        while queue:
+            vertex = queue.popleft()
+
+            if vertex not in visited:
+                visited.add(vertex)
+                result.append(vertex)
+
+                for neighbor, _ in self.graph[vertex]:
+                    if neighbor not in visited:
+                        queue.append(neighbor)
+
+        return result
 
     def has_cycle(self):
         pass

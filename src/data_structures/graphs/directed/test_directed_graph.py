@@ -179,6 +179,26 @@ class TestEdgeOperations:
         assert g.get_edge_weight('A', 'B') == 10
         assert g.get_edge_weight('B', 'A') is None
 
+    def test_update_edge_weight(self):
+        """Test updating edge weight."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B', 5)
+        result = g.update_edge_weight('A', 'B', 15)
+
+        assert result is True
+        assert g.get_edge_weight('A', 'B') == 15
+
+    def test_update_nonexistent_edge_weight(self):
+        """Test updating weight of nonexistent edge."""
+        g = DirectedGraph()
+
+        g.add_vertex('A')
+        g.add_vertex('B')
+        result = g.update_edge_weight('A', 'B', 10)
+
+        assert result is False
+
     def test_get_edges(self):
         """Test getting all edges."""
         g = DirectedGraph()
@@ -192,6 +212,181 @@ class TestEdgeOperations:
         assert ('A', 'B', 1) in edges
         assert ('B', 'C', 2) in edges
         assert ('C', 'A', 3) in edges
+
+
+class TestNeighborsAndDegrees:
+    """Test neighbor queries and degree calculations."""
+
+    def test_get_neighbors(self):
+        """Test getting neighbors of a vertex."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B', 1)
+        g.add_edge('A', 'C', 2)
+        neighbors = g.get_neighbors('A')
+
+        assert len(neighbors) == 2
+        assert ('B', 1) in neighbors
+        assert ('C', 2) in neighbors
+
+    def test_get_neighbors_empty(self):
+        """Test getting neighbors of vertex with no outgoing edges."""
+        g = DirectedGraph()
+
+        g.add_vertex('A')
+        neighbors = g.get_neighbors('A')
+
+        assert neighbors == []
+
+    def test_get_neighbors_nonexistent_vertex(self):
+        """Test getting neighbors of nonexistent vertex raises error."""
+        g = DirectedGraph()
+
+        with pytest.raises(ValueError, match="Vertex Z not in graph"):
+            g.get_neighbors('Z')
+
+    def test_in_degree(self):
+        """Test in-degree calculation."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'C')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'D')
+
+        assert g.in_degree('A') == 0
+        assert g.in_degree('B') == 0
+        assert g.in_degree('C') == 2
+        assert g.in_degree('D') == 1
+
+    def test_out_degree(self):
+        """Test out-degree calculation."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('A', 'C')
+        g.add_edge('B', 'C')
+
+        assert g.out_degree('A') == 2
+        assert g.out_degree('B') == 1
+        assert g.out_degree('C') == 0
+
+    def test_degree_nonexistent_vertex(self):
+        """Test that degree methods raise error for nonexistent vertex."""
+        g = DirectedGraph()
+
+        with pytest.raises(ValueError):
+            g.in_degree('Z')
+
+        with pytest.raises(ValueError):
+            g.out_degree('Z')
+
+    def test_in_degree_after_edge_removal(self):
+        """Test that in-degree updates correctly after edge removal."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('C', 'B')
+
+        assert g.in_degree('B') == 2
+
+        g.remove_edge('A', 'B')
+        assert g.in_degree('B') == 1
+
+
+class TestTraversals:
+    """Test DFS and BFS traversals."""
+
+    def test_dfs_linear_graph(self):
+        """Test DFS on a linear graph."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'D')
+        result = g.dfs('A')
+
+        assert result == ['A', 'B', 'C', 'D']
+
+    def test_dfs_branching_graph(self):
+        """Test DFS on a branching graph."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('A', 'C')
+        g.add_edge('B', 'D')
+        g.add_edge('C', 'D')
+        result = g.dfs('A')
+
+        assert result[0] == 'A'
+        assert 'D' in result
+        assert len(result) == 4
+
+    def test_dfs_with_cycle(self):
+        """Test DFS on graph with cycle."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'A')
+        result = g.dfs('A')
+
+        # Should visit each vertex exactly once
+        assert len(result) == 3
+        assert set(result) == {'A', 'B', 'C'}
+
+    def test_dfs_single_vertex(self):
+        """Test DFS on single vertex."""
+        g = DirectedGraph()
+
+        g.add_vertex('A')
+        result = g.dfs('A')
+
+        assert result == ['A']
+
+    def test_dfs_nonexistent_vertex(self):
+        """Test DFS raises error for nonexistent vertex."""
+        g = DirectedGraph()
+
+        with pytest.raises(ValueError):
+            g.dfs('Z')
+
+    def test_bfs_linear_graph(self):
+        """Test BFS on a linear graph."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'D')
+        result = g.bfs('A')
+
+        assert result == ['A', 'B', 'C', 'D']
+
+    def test_bfs_level_order(self):
+        """Test BFS visits vertices level by level."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('A', 'C')
+        g.add_edge('B', 'D')
+        g.add_edge('C', 'E')
+        result = g.bfs('A')
+
+        assert result[0] == 'A'
+        # B and C should come before D and E
+        b_idx = result.index('B')
+        c_idx = result.index('C')
+        d_idx = result.index('D')
+        e_idx = result.index('E')
+
+        assert b_idx < d_idx
+        assert c_idx < e_idx
+
+    def test_bfs_nonexistent_vertex(self):
+        """Test BFS raises error for nonexistent vertex."""
+        g = DirectedGraph()
+
+        with pytest.raises(ValueError):
+            g.bfs('Z')
 
 
 class TestGraphOperations:
