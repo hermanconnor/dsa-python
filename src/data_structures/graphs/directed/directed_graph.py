@@ -21,7 +21,7 @@ class DirectedGraph(Generic[V, W]):
         Time Complexity: O(1)
         """
         self.graph: Dict[V, List[Tuple[V, W]]] = defaultdict(list)
-        self.in_degrees: Dict[V, int] = defaultdict(int)
+        self.in_degree_counts: Dict[V, int] = defaultdict(int)
 
     def add_vertex(self, vertex: V) -> None:
         """
@@ -29,7 +29,11 @@ class DirectedGraph(Generic[V, W]):
 
         Time Complexity: O(1)
         """
-        pass
+        if vertex not in self.graph:
+            self.graph[vertex]
+
+        if vertex not in self.in_degree_counts:
+            self.in_degree_counts[vertex] = 0
 
     def add_edge(self, from_vertex: V, to_vertex: V, weight: W = 1) -> bool:
         """
@@ -38,7 +42,18 @@ class DirectedGraph(Generic[V, W]):
 
         Time Complexity: O(E_v) where E_v is the out-degree of from_vertex
         """
-        pass
+        self.add_vertex(from_vertex)
+        self.add_vertex(to_vertex)
+
+        # Check for duplicate edge (O(E_v))
+        if any(neighbor == to_vertex for neighbor, _ in self.graph[from_vertex]):
+            return False
+
+        # Add the edge
+        self.graph[from_vertex].append((to_vertex, weight))
+        self.in_degree_counts[to_vertex] += 1
+
+        return True
 
     def remove_vertex(self):
         pass
@@ -49,11 +64,27 @@ class DirectedGraph(Generic[V, W]):
     def get_neighbors(self):
         pass
 
-    def get_vertices(self):
-        pass
+    def get_vertices(self) -> List[V]:
+        """
+        Get all vertices in the graph.
 
-    def get_edges(self):
-        pass
+        Time Complexity: O(V)
+        """
+        return list(self.graph.keys())
+
+    def get_edges(self) -> List[Tuple[V, V, W]]:
+        """
+        Get all edges as a list of (from, to, weight) tuples.
+
+        Time Complexity: O(V + E)
+        """
+        edges = []
+
+        for from_vertex in self.graph:
+            for to_vertex, weight in self.graph[from_vertex]:
+                edges.append((from_vertex, to_vertex, weight))
+
+        return edges
 
     def has_edge(self):
         pass
@@ -91,17 +122,64 @@ class DirectedGraph(Generic[V, W]):
     def weakly_connected_components(self):
         pass
 
-    def is_empty(self):
-        pass
+    def is_empty(self) -> bool:
+        """
+        Check if the graph has any vertices.
 
-    def clear(self):
-        pass
+        Time Complexity: O(1)
+        """
+        return len(self.graph) == 0
+
+    def clear(self) -> None:
+        """
+        Remove all vertices and edges from the graph.
+
+        Time Complexity: O(1)
+        """
+        self.graph.clear()
+        self.in_degree_counts.clear()
 
     def copy(self):
         pass
 
-    def __str__(self):
-        pass
+    def __contains__(self, vertex: V) -> bool:
+        """
+        Check if a vertex is in the graph. Allows 'if vertex in graph:'.
 
-    def __repr__(self):
-        pass
+        Time Complexity: O(1)
+        """
+        return vertex in self.graph
+
+    def __str__(self) -> str:
+        """
+        String representation of the graph showing adjacency lists.
+
+        Time Complexity: O(V + E)
+        """
+        if not self.graph:
+            return "Empty Graph"
+
+        result = []
+        for vertex in sorted(self.graph.keys(), key=str):
+            neighbors = self.graph[vertex]
+
+            if neighbors:
+                neighbor_strs = [
+                    f"{neighbor}({weight})" for neighbor, weight in neighbors]
+
+                result.append(f"{vertex} -> {', '.join(neighbor_strs)}")
+            else:
+                result.append(f"{vertex} -> []")
+
+        return "\n".join(result)
+
+    def __repr__(self) -> str:
+        """
+        Unambiguous representation of the graph.
+
+        Time Complexity: O(1)
+        """
+        num_vertices = len(self.graph)
+        num_edges = sum(len(edges) for edges in self.graph.values())
+
+        return f"DirectedGraph(vertices={num_vertices}, edges={num_edges})"
