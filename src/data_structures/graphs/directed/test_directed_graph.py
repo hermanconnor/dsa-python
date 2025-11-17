@@ -388,6 +388,106 @@ class TestTraversals:
         with pytest.raises(ValueError):
             g.bfs('Z')
 
+class TestCycleDetection:
+    """Test cycle detection."""
+    
+    def test_has_cycle_acyclic(self):
+        """Test cycle detection on acyclic graph."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('A', 'C')
+
+        assert not g.has_cycle()
+    
+    def test_has_cycle_with_cycle(self):
+        """Test cycle detection on graph with cycle."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'A')
+
+        assert g.has_cycle()
+    
+    def test_has_cycle_self_loop(self):
+        """Test cycle detection with self-loop."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'A')
+        assert g.has_cycle()
+    
+    def test_has_cycle_empty_graph(self):
+        """Test cycle detection on empty graph."""
+        g = DirectedGraph()
+        assert not g.has_cycle()
+    
+    def test_has_cycle_disconnected_with_cycle(self):
+        """Test cycle detection with disconnected components."""
+        g = DirectedGraph()
+
+        # Component 1: no cycle
+        g.add_edge('A', 'B')
+        # Component 2: has cycle
+        g.add_edge('C', 'D')
+        g.add_edge('D', 'E')
+        g.add_edge('E', 'C')
+
+        assert g.has_cycle()
+
+
+class TestTopologicalSort:
+    """Test topological sorting."""
+    
+    def test_topological_sort_linear(self):
+        """Test topological sort on linear graph."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'D')
+        result = g.topological_sort()
+
+        assert result == ['A', 'B', 'C', 'D']
+    
+    def test_topological_sort_dag(self):
+        """Test topological sort on DAG."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'C')
+        g.add_edge('B', 'C')
+        g.add_edge('B', 'D')
+        g.add_edge('C', 'E')
+        g.add_edge('D', 'E')
+        result = g.topological_sort()
+
+        # Verify valid topological order
+        assert result.index('A') < result.index('C')
+        assert result.index('B') < result.index('C')
+        assert result.index('B') < result.index('D')
+        assert result.index('C') < result.index('E')
+        assert result.index('D') < result.index('E')
+    
+    def test_topological_sort_with_cycle(self):
+        """Test topological sort returns None for graph with cycle."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'A')
+        result = g.topological_sort()
+
+        assert result is None
+    
+    def test_topological_sort_empty_graph(self):
+        """Test topological sort on empty graph."""
+        g = DirectedGraph()
+
+        result = g.topological_sort()
+        
+        assert result == []
+
 
 class TestGraphOperations:
     """Test graph-level operations."""

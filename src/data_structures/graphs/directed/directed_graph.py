@@ -165,7 +165,7 @@ class DirectedGraph(Generic[V, W]):
 
         return any(neighbor == to_vertex for neighbor, _ in self.graph[from_vertex])
 
-    def get_edge_weight(self, from_vertex: V, to_vertex: V) -> Optional[W] | None:
+    def get_edge_weight(self, from_vertex: V, to_vertex: V) -> W | None:
         """
         Get the weight of the edge from from_vertex to to_vertex.
 
@@ -286,19 +286,82 @@ class DirectedGraph(Generic[V, W]):
 
         return result
 
-    def has_cycle(self):
-        pass
+    def has_cycle(self) -> bool:
+        """
+        Check if the graph has a cycle using DFS with color marking.
 
-    def topological_sort(self):
-        pass
+        Time Complexity: O(V + E)
+        """
+        WHITE, GRAY, BLACK = 0, 1, 2
+        color: Dict[V, int] = {vertex: WHITE for vertex in self.graph}
+
+        def dfs_visit(vertex: V) -> bool:
+            color[vertex] = GRAY
+
+            for neighbor, _ in self.graph[vertex]:
+                # Back edge found
+                if color[neighbor] == GRAY:
+                    return True
+                elif color[neighbor] == WHITE and dfs_visit(neighbor):
+                    return True
+
+            color[vertex] = BLACK
+            return False
+
+        for vertex in self.graph:
+            if color[vertex] == WHITE:
+                if dfs_visit(vertex):
+                    return True
+
+        return False
+
+    def topological_sort(self) -> List[V] | None:
+        """
+        Return a topological ordering of vertices if graph is acyclic.
+        Detects cycles during the sort (single pass).
+
+        Time Complexity: O(V + E)
+
+        Returns:
+            List of vertices in topological order, or None if graph has a cycle
+        """
+        WHITE, GRAY, BLACK = 0, 1, 2
+        color: Dict[V, int] = {vertex: WHITE for vertex in self.graph}
+        stack: List[V] = []
+        has_cycle = False
+
+        def dfs_visit(vertex: V) -> None:
+            nonlocal has_cycle
+            color[vertex] = GRAY
+            for neighbor, _ in self.graph[vertex]:
+                if color[neighbor] == GRAY:
+                    has_cycle = True
+                    return
+                elif color[neighbor] == WHITE:
+                    dfs_visit(neighbor)
+
+            color[vertex] = BLACK
+            stack.append(vertex)
+
+        for vertex in self.graph:
+            if color[vertex] == WHITE:
+                dfs_visit(vertex)
+                if has_cycle:
+                    return None
+
+        # Reverse to get correct order
+        return stack[::-1]
 
     def reverse(self):
+        pass
+
+    def weakly_connected_components(self):
         pass
 
     def strongly_connected_components(self):
         pass
 
-    def weakly_connected_components(self):
+    def copy(self):
         pass
 
     def is_empty(self) -> bool:
@@ -318,8 +381,7 @@ class DirectedGraph(Generic[V, W]):
         self.graph.clear()
         self.in_degree_counts.clear()
 
-    def copy(self):
-        pass
+   
 
     def __contains__(self, vertex: V) -> bool:
         """
