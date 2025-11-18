@@ -352,17 +352,76 @@ class DirectedGraph(Generic[V, W]):
         # Reverse to get correct order
         return stack[::-1]
 
-    def reverse(self):
+    def reverse(self) -> 'DirectedGraph[V, W]':
+        """
+        Create a new graph with all edges reversed.
+
+        Time Complexity: O(V + E)
+        """
+        reversed_graph = DirectedGraph()
+
+        # Add all vertices
+        for vertex in self.graph:
+            reversed_graph.add_vertex(vertex)
+
+        # Add reversed edges
+        for from_vertex in self.graph:
+            for to_vertex, weight in self.graph[from_vertex]:
+                reversed_graph.add_edge(to_vertex, from_vertex, weight)
+
+        return reversed_graph
+
+    def weakly_connected_components(self) -> List[List[V]]:
+        """
+        Find all weakly connected components using DFS.
+
+        Time Complexity: O(V + E)
+        """
+        visited: Set[V] = set()
+        components: List[List[V]] = []
+
+        for vertex in self.graph:
+            if vertex not in visited:
+                component = self.dfs(vertex)
+                visited.update(component)
+                components.append(component)
+
+        return components
+
+    def strongly_connected_components(self) -> List[List[V]]:
+        """
+        Finds all Strongly Connected Components (SCCs) using Kosaraju's Algorithm.
+
+        Time Complexity: O(V + E)
+
+        Returns:
+            List[List[V]]: A list where each inner list represents an SCC.
+        """
         pass
 
-    def weakly_connected_components(self):
-        pass
+    def copy(self) -> 'DirectedGraph[V, W]':
+        """
+        Create a deep copy of the graph.
 
-    def strongly_connected_components(self):
-        pass
+        Time Complexity: O(V + E)
+        """
+        new_graph = DirectedGraph()
 
-    def copy(self):
-        pass
+        # Copy all vertices
+        for vertex in self.graph:
+            new_graph.add_vertex(vertex)
+
+        # Copy all vertices
+        for vertex in self.graph:
+            new_graph.add_vertex(vertex)
+
+        # Copy all edges
+        for from_vertex in self.graph:
+            for to_vertex, weight in self.graph[from_vertex]:
+                new_graph.graph[from_vertex].append((to_vertex, weight))
+                new_graph.in_degree_counts[to_vertex] += 1
+
+        return new_graph
 
     def is_empty(self) -> bool:
         """
@@ -380,8 +439,6 @@ class DirectedGraph(Generic[V, W]):
         """
         self.graph.clear()
         self.in_degree_counts.clear()
-
-   
 
     def __contains__(self, vertex: V) -> bool:
         """

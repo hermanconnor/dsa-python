@@ -388,9 +388,10 @@ class TestTraversals:
         with pytest.raises(ValueError):
             g.bfs('Z')
 
+
 class TestCycleDetection:
     """Test cycle detection."""
-    
+
     def test_has_cycle_acyclic(self):
         """Test cycle detection on acyclic graph."""
         g = DirectedGraph()
@@ -400,7 +401,7 @@ class TestCycleDetection:
         g.add_edge('A', 'C')
 
         assert not g.has_cycle()
-    
+
     def test_has_cycle_with_cycle(self):
         """Test cycle detection on graph with cycle."""
         g = DirectedGraph()
@@ -410,19 +411,19 @@ class TestCycleDetection:
         g.add_edge('C', 'A')
 
         assert g.has_cycle()
-    
+
     def test_has_cycle_self_loop(self):
         """Test cycle detection with self-loop."""
         g = DirectedGraph()
 
         g.add_edge('A', 'A')
         assert g.has_cycle()
-    
+
     def test_has_cycle_empty_graph(self):
         """Test cycle detection on empty graph."""
         g = DirectedGraph()
         assert not g.has_cycle()
-    
+
     def test_has_cycle_disconnected_with_cycle(self):
         """Test cycle detection with disconnected components."""
         g = DirectedGraph()
@@ -439,7 +440,7 @@ class TestCycleDetection:
 
 class TestTopologicalSort:
     """Test topological sorting."""
-    
+
     def test_topological_sort_linear(self):
         """Test topological sort on linear graph."""
         g = DirectedGraph()
@@ -450,7 +451,7 @@ class TestTopologicalSort:
         result = g.topological_sort()
 
         assert result == ['A', 'B', 'C', 'D']
-    
+
     def test_topological_sort_dag(self):
         """Test topological sort on DAG."""
         g = DirectedGraph()
@@ -468,7 +469,7 @@ class TestTopologicalSort:
         assert result.index('B') < result.index('D')
         assert result.index('C') < result.index('E')
         assert result.index('D') < result.index('E')
-    
+
     def test_topological_sort_with_cycle(self):
         """Test topological sort returns None for graph with cycle."""
         g = DirectedGraph()
@@ -479,13 +480,13 @@ class TestTopologicalSort:
         result = g.topological_sort()
 
         assert result is None
-    
+
     def test_topological_sort_empty_graph(self):
         """Test topological sort on empty graph."""
         g = DirectedGraph()
 
         result = g.topological_sort()
-        
+
         assert result == []
 
 
@@ -542,3 +543,298 @@ class TestStringRepresentation:
         result = str(g)
 
         assert 'A -> []' in result
+
+
+class TestReverse:
+    """Tests for the reverse() method."""
+
+    def test_reverse_empty_graph(self):
+        """Test reversing an empty graph."""
+        g = DirectedGraph()
+
+        reversed_graph = g.reverse()
+
+        assert reversed_graph.is_empty()
+        assert reversed_graph.get_vertices() == []
+
+    def test_reverse_single_vertex(self):
+        """Test reversing a graph with a single vertex and no edges."""
+        g = DirectedGraph()
+
+        g.add_vertex('A')
+        reversed_graph = g.reverse()
+
+        assert 'A' in reversed_graph
+        assert reversed_graph.get_neighbors('A') == []
+
+    def test_reverse_simple_edge(self):
+        """Test reversing a simple directed edge."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B', weight=5)
+        reversed_graph = g.reverse()
+
+        # Original: A -> B
+        # Reversed: B -> A
+        assert reversed_graph.has_edge('B', 'A')
+        assert not reversed_graph.has_edge('A', 'B')
+        assert reversed_graph.get_edge_weight('B', 'A') == 5
+
+    def test_reverse_chain(self):
+        """Test reversing a chain of vertices."""
+        g = DirectedGraph()
+        # Create chain: A -> B -> C -> D
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'D')
+
+        reversed_graph = g.reverse()
+
+        # Reversed: D -> C -> B -> A
+        assert reversed_graph.has_edge('D', 'C')
+        assert reversed_graph.has_edge('C', 'B')
+        assert reversed_graph.has_edge('B', 'A')
+        assert not reversed_graph.has_edge('A', 'B')
+
+    def test_reverse_cycle(self):
+        """Test reversing a cycle."""
+        g = DirectedGraph()
+        # Create cycle: A -> B -> C -> A
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'A')
+
+        reversed_graph = g.reverse()
+
+        # Reversed cycle: A -> C -> B -> A
+        assert reversed_graph.has_edge('B', 'A')
+        assert reversed_graph.has_edge('C', 'B')
+        assert reversed_graph.has_edge('A', 'C')
+
+    def test_reverse_preserves_weights(self):
+        """Test that reversing preserves edge weights."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B', weight=10)
+        g.add_edge('B', 'C', weight=20)
+        g.add_edge('A', 'C', weight=30)
+
+        reversed_graph = g.reverse()
+
+        assert reversed_graph.get_edge_weight('B', 'A') == 10
+        assert reversed_graph.get_edge_weight('C', 'B') == 20
+        assert reversed_graph.get_edge_weight('C', 'A') == 30
+
+    def test_reverse_twice_equals_original(self):
+        """Test that reversing twice returns to original structure."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B', weight=5)
+        g.add_edge('B', 'C', weight=10)
+        g.add_edge('A', 'C', weight=15)
+
+        double_reversed = g.reverse().reverse()
+
+        # Check all edges are restored
+        assert double_reversed.has_edge('A', 'B')
+        assert double_reversed.has_edge('B', 'C')
+        assert double_reversed.has_edge('A', 'C')
+        assert double_reversed.get_edge_weight('A', 'B') == 5
+        assert double_reversed.get_edge_weight('B', 'C') == 10
+        assert double_reversed.get_edge_weight('A', 'C') == 15
+
+
+class TestCopy:
+    """Tests for the copy() method."""
+
+    def test_copy_empty_graph(self):
+        """Test copying an empty graph."""
+        g = DirectedGraph()
+
+        copied = g.copy()
+        assert copied.is_empty()
+        assert copied.get_vertices() == []
+
+    def test_copy_single_vertex(self):
+        """Test copying a graph with a single vertex."""
+        g = DirectedGraph()
+
+        g.add_vertex('A')
+        copied = g.copy()
+
+        assert 'A' in copied
+        assert copied.get_neighbors('A') == []
+
+    def test_copy_basic_structure(self):
+        """Test that copy preserves basic graph structure."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B', weight=5)
+        g.add_edge('B', 'C', weight=10)
+        g.add_edge('A', 'C', weight=15)
+
+        copied = g.copy()
+
+        assert copied.has_edge('A', 'B')
+        assert copied.has_edge('B', 'C')
+        assert copied.has_edge('A', 'C')
+        assert copied.get_edge_weight('A', 'B') == 5
+        assert copied.get_edge_weight('B', 'C') == 10
+        assert copied.get_edge_weight('A', 'C') == 15
+
+    def test_copy_independence(self):
+        """Test that copied graph is independent from original."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B', weight=5)
+        copied = g.copy()
+
+        # Modify original
+        g.add_edge('B', 'C', weight=10)
+        g.update_edge_weight('A', 'B', 100)
+
+        # Copy should be unchanged
+        assert not copied.has_edge('B', 'C')
+        assert copied.get_edge_weight('A', 'B') == 5
+
+    def test_copy_vertex_independence(self):
+        """Test that adding/removing vertices doesn't affect copy."""
+        g = DirectedGraph()
+
+        g.add_vertex('A')
+        g.add_vertex('B')
+        copied = g.copy()
+
+        # Add vertex to original
+        g.add_vertex('C')
+
+        # Remove vertex from copy
+        copied.remove_vertex('B')
+
+        # Check independence
+        assert 'C' not in copied
+        assert 'B' in g
+
+    def test_copy_preserves_in_degrees(self):
+        """Test that copy preserves in-degree counts."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'C')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'D')
+
+        copied = g.copy()
+
+        assert copied.in_degree('C') == 2
+        assert copied.in_degree('D') == 1
+        assert copied.in_degree('A') == 0
+
+    def test_copy_complex_graph(self):
+        """Test copying a more complex graph."""
+        g = DirectedGraph()
+        # Create a graph with multiple components
+        g.add_edge('A', 'B', weight=1)
+        g.add_edge('B', 'C', weight=2)
+        g.add_edge('C', 'A', weight=3)  # Cycle
+        g.add_edge('D', 'E', weight=4)  # Separate component
+
+        copied = g.copy()
+
+        # Verify structure
+        assert set(copied.get_vertices()) == {'A', 'B', 'C', 'D', 'E'}
+        assert copied.has_cycle()
+        assert len(copied.get_edges()) == 4
+
+
+class TestWeaklyConnectedComponents:
+    """Tests for the weakly_connected_components() method."""
+
+    def test_wcc_empty_graph(self):
+        """Test WCC on an empty graph."""
+        g = DirectedGraph()
+
+        components = g.weakly_connected_components()
+        assert components == []
+
+    def test_wcc_single_vertex(self):
+        """Test WCC with a single isolated vertex."""
+        g = DirectedGraph()
+
+        g.add_vertex('A')
+        components = g.weakly_connected_components()
+
+        assert len(components) == 1
+        assert 'A' in components[0]
+
+    def test_wcc_fully_connected(self):
+        """Test WCC on a fully connected graph."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'D')
+
+        components = g.weakly_connected_components()
+
+        assert len(components) == 1
+        assert set(components[0]) == {'A', 'B', 'C', 'D'}
+
+    def test_wcc_two_components(self):
+        """Test WCC with two separate components."""
+        g = DirectedGraph()
+        # Component 1
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+
+        # Component 2
+        g.add_edge('D', 'E')
+        g.add_edge('E', 'F')
+
+        components = g.weakly_connected_components()
+
+        assert len(components) == 2
+        component_sets = [set(c) for c in components]
+        assert {'A', 'B', 'C'} in component_sets
+        assert {'D', 'E', 'F'} in component_sets
+
+    def test_wcc_isolated_vertices(self):
+        """Test WCC with isolated vertices."""
+        g = DirectedGraph()
+
+        g.add_vertex('A')
+        g.add_vertex('B')
+        g.add_vertex('C')
+
+        components = g.weakly_connected_components()
+
+        assert len(components) == 3
+        assert all(len(c) == 1 for c in components)
+
+    def test_wcc_with_cycle(self):
+        """Test WCC with a cycle (should still be one component)."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'A')
+
+        components = g.weakly_connected_components()
+
+        assert len(components) == 1
+        assert set(components[0]) == {'A', 'B', 'C'}
+
+    def test_wcc_mixed_components(self):
+        """Test WCC with mix of connected and isolated vertices."""
+        g = DirectedGraph()
+
+        # Connected component
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+
+        # Isolated vertices
+        g.add_vertex('D')
+        g.add_vertex('E')
+
+        components = g.weakly_connected_components()
+
+        assert len(components) == 3
