@@ -397,7 +397,50 @@ class DirectedGraph(Generic[V, W]):
         Returns:
             List[List[V]]: A list where each inner list represents an SCC.
         """
-        pass
+        # 1. First DFS to get finishing order
+        visited: Set[V] = set()
+        order: List[V] = []
+
+        def dfs_order(vertex: V) -> None:
+            visited.add(vertex)
+            for neighbor, _ in self.graph[vertex]:
+                if neighbor not in visited:
+                    dfs_order(neighbor)
+            order.append(vertex)
+
+        for vertex in self.graph:
+            if vertex not in visited:
+                dfs_order(vertex)
+
+        # 2. Reverse the graph (O(V + E))
+        reversed_graph = self.reverse()
+
+        # 3. Second DFS on reversed graph in decreasing order of finishing times
+        sccs: List[List[V]] = []
+        visited.clear()  # Reset visited set for the second pass
+
+        # Iterate in reverse order of the first DFS's finishing times
+        for vertex in reversed(order):
+            if vertex not in visited:
+                component: List[V] = []
+                stack: List[V] = [vertex]
+                visited.add(vertex)
+
+                while stack:
+                    u = stack.pop()
+                    component.append(u)
+
+                    # Traverse neighbors in the reversed graph
+                    # Note: We must call the reversed_graph's own method
+                    # to correctly handle vertices with no outgoing edges in the reversed graph.
+                    for neighbor, _ in reversed_graph.graph.get(u, []):
+                        if neighbor not in visited:
+                            visited.add(neighbor)
+                            stack.append(neighbor)
+
+                sccs.append(component)
+
+        return sccs
 
     def copy(self) -> 'DirectedGraph[V, W]':
         """

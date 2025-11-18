@@ -838,3 +838,136 @@ class TestWeaklyConnectedComponents:
         components = g.weakly_connected_components()
 
         assert len(components) == 3
+
+
+class TestStronglyConnectedComponents:
+    """Tests for the strongly_connected_components() method."""
+
+    def test_scc_empty_graph(self):
+        """Test SCC on an empty graph."""
+        g = DirectedGraph()
+
+        sccs = g.strongly_connected_components()
+        assert sccs == []
+
+    def test_scc_single_vertex(self):
+        """Test SCC with a single vertex."""
+        g = DirectedGraph()
+
+        g.add_vertex('A')
+        sccs = g.strongly_connected_components()
+
+        assert len(sccs) == 1
+        assert 'A' in sccs[0]
+
+    def test_scc_simple_cycle(self):
+        """Test SCC with a simple cycle."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'A')
+
+        sccs = g.strongly_connected_components()
+
+        assert len(sccs) == 1
+        assert set(sccs[0]) == {'A', 'B', 'C'}
+
+    def test_scc_linear_chain(self):
+        """Test SCC with a linear chain (no cycles)."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'D')
+
+        sccs = g.strongly_connected_components()
+
+        # Each vertex is its own SCC
+        assert len(sccs) == 4
+        scc_sets = [set(scc) for scc in sccs]
+        assert {'A'} in scc_sets
+        assert {'B'} in scc_sets
+        assert {'C'} in scc_sets
+        assert {'D'} in scc_sets
+
+    def test_scc_two_cycles(self):
+        """Test SCC with two separate cycles."""
+        g = DirectedGraph()
+
+        # Cycle 1
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'A')
+
+        # Cycle 2
+        g.add_edge('C', 'D')
+        g.add_edge('D', 'C')
+
+        sccs = g.strongly_connected_components()
+
+        assert len(sccs) == 2
+        scc_sets = [set(scc) for scc in sccs]
+        assert {'A', 'B'} in scc_sets
+        assert {'C', 'D'} in scc_sets
+
+    def test_scc_mixed_structure(self):
+        """Test SCC with cycles connected by one-way edges."""
+        g = DirectedGraph()
+
+        # Create: (A <-> B) -> (C <-> D)
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'A')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'D')
+        g.add_edge('D', 'C')
+
+        sccs = g.strongly_connected_components()
+
+        assert len(sccs) == 2
+        scc_sets = [set(scc) for scc in sccs]
+        assert {'A', 'B'} in scc_sets
+        assert {'C', 'D'} in scc_sets
+
+    def test_scc_complex_graph(self):
+        """Test SCC on a more complex graph."""
+        g = DirectedGraph()
+        # Create graph with 3 SCCs
+        # SCC1: A -> B -> C -> A
+        g.add_edge('A', 'B')
+        g.add_edge('B', 'C')
+        g.add_edge('C', 'A')
+
+        # SCC2: D <-> E
+        g.add_edge('D', 'E')
+        g.add_edge('E', 'D')
+
+        # SCC3: F (alone)
+        g.add_vertex('F')
+
+        # Connect them: C -> D, E -> F
+        g.add_edge('C', 'D')
+        g.add_edge('E', 'F')
+
+        sccs = g.strongly_connected_components()
+
+        assert len(sccs) == 3
+        scc_sets = [set(scc) for scc in sccs]
+        assert {'A', 'B', 'C'} in scc_sets
+        assert {'D', 'E'} in scc_sets
+        assert {'F'} in scc_sets
+
+    def test_scc_self_loop(self):
+        """Test SCC with a self-loop."""
+        g = DirectedGraph()
+
+        g.add_edge('A', 'A')  # Self-loop
+        g.add_edge('A', 'B')
+
+        sccs = g.strongly_connected_components()
+
+        # A has a self-loop so it's strongly connected to itself
+        # B is separate
+        assert len(sccs) == 2
+        scc_sets = [set(scc) for scc in sccs]
+        assert {'A'} in scc_sets
+        assert {'B'} in scc_sets

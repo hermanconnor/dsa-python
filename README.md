@@ -19,7 +19,7 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 - [x] Linked List (Doubly)
 - [x] Deque
 - [x] Deque (Circular)
-- [ ] Graph (Directed Adjacency List)
+- [x] Graph (Directed Adjacency List)
 - [ ] Graph (Undirected Adjacency List)
 
 ## 🎯 My Learning Goals
