@@ -243,3 +243,52 @@ class TestEdgeOperations:
             edge = frozenset([v1, v2])
             assert edge not in edge_set
             edge_set.add(edge)
+
+
+class TestNeighborsAndDegree:
+    """Test neighbor retrieval and degree calculations."""
+
+    def test_get_neighbors(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2, 5)
+        graph.add_edge(1, 3, 10)
+        neighbors = graph.get_neighbors(1)
+
+        assert len(neighbors) == 2
+
+        neighbor_vertices = [v for v, w in neighbors]
+
+        assert 2 in neighbor_vertices
+        assert 3 in neighbor_vertices
+
+    def test_get_neighbors_nonexistent_vertex(self):
+        graph = UndirectedGraph()
+
+        with pytest.raises(ValueError, match="Vertex 1 not in graph"):
+            graph.get_neighbors(1)
+
+    def test_degree(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2)
+        graph.add_edge(1, 3)
+        graph.add_edge(1, 4)
+
+        assert graph.degree(1) == 3
+        assert graph.degree(2) == 1
+        assert graph.degree(3) == 1
+        assert graph.degree(4) == 1
+
+    def test_degree_isolated_vertex(self):
+        graph = UndirectedGraph()
+
+        graph.add_vertex(1)
+
+        assert graph.degree(1) == 0
+
+    def test_degree_nonexistent_vertex(self):
+        graph = UndirectedGraph()
+
+        with pytest.raises(ValueError, match="Vertex 1 not in graph"):
+            graph.degree(1)

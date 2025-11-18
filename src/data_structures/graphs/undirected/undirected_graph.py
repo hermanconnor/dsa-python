@@ -210,6 +210,20 @@ class UndirectedGraph(Generic[V, W]):
 
         return updated
 
+    def degree(self, vertex: V) -> int:
+        """
+        Calculate the degree of a vertex (number of edges connected to it).
+
+        Time Complexity: O(1)
+
+        Raises:
+            ValueError: If vertex not in graph
+        """
+        if vertex not in self.graph:
+            raise ValueError(f"Vertex {vertex} not in graph")
+
+        return len(self.graph[vertex])
+
     def is_empty(self) -> bool:
         """
         Check if the graph has any vertices.
