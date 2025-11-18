@@ -57,6 +57,75 @@ class UndirectedGraph(Generic[V, W]):
 
         return True
 
+    def remove_vertex(self, vertex: V) -> bool:
+        """
+        Remove a vertex and all edges connected to it.
+
+        Time Complexity: O(V + E) where V is vertices and E is edges
+
+        Returns:
+            bool: True if vertex was removed, False if it didn't exist
+        """
+        if vertex not in self.graph:
+            return False
+
+        # Remove all edges from neighbors pointing to this vertex
+        for neighbor, _ in self.graph[vertex]:
+            if neighbor in self.graph:
+                self.graph[neighbor] = [
+                    (v, w) for v, w in self.graph[neighbor] if v != vertex
+                ]
+        # Remove the vertex from the graph
+        del self.graph[vertex]
+
+        return True
+
+    def remove_edge(self, vertex1: V, vertex2: V) -> bool:
+        """
+        Remove the undirected edge between vertex1 and vertex2.
+
+        Time Complexity: O(E_v) where E_v is the degree of the vertices
+
+        Returns:
+            bool: True if edge was removed, False if it didn't exist
+        """
+        if vertex1 not in self.graph or vertex2 not in self.graph:
+            return False
+
+        original_length1 = len(self.graph[vertex1])
+        original_length2 = len(self.graph[vertex2])
+
+        # Remove edge from both directions
+        self.graph[vertex1] = [
+            (neighbor, weight) for neighbor, weight in self.graph[vertex1]
+            if neighbor != vertex2
+        ]
+
+        self.graph[vertex2] = [
+            (neighbor, weight) for neighbor, weight in self.graph[vertex2]
+            if neighbor != vertex1
+        ]
+
+        # Check if edge was actually removed
+        edge_removed = (len(self.graph[vertex1]) < original_length1 and
+                        len(self.graph[vertex2]) < original_length2)
+
+        return edge_removed
+
+    def get_neighbors(self, vertex: V) -> List[Tuple[V, W]]:
+        """
+        Get all neighbors of a vertex with their weights.
+
+        Time Complexity: O(1)
+
+        Raises:
+            ValueError: If vertex not in graph
+        """
+        if vertex not in self.graph:
+            raise ValueError(f"Vertex {vertex} not in graph")
+
+        return self.graph[vertex]
+
     def get_vertices(self) -> List[V]:
         """
         Get all vertices in the graph.
@@ -96,6 +165,51 @@ class UndirectedGraph(Generic[V, W]):
 
         return any(neighbor == vertex2 for neighbor, _ in self.graph[vertex1])
 
+    def get_edge_weight(self, vertex1: V, vertex2: V) -> W | None:
+        """
+        Get the weight of the edge between vertex1 and vertex2.
+
+        Time Complexity: O(E_v) where E_v is the degree of vertex1
+
+        Returns:
+            weight or None: Weight if edge exists, None otherwise
+        """
+        if vertex1 in self.graph:
+            for neighbor, weight in self.graph[vertex1]:
+                if neighbor == vertex2:
+                    return weight
+
+        return None
+
+    def update_edge_weight(self, vertex1: V, vertex2: V, new_weight: W) -> bool:
+        """
+        Update the weight of an existing edge in both directions.
+
+        Time Complexity: O(E_v) where E_v is the degree of the vertices
+
+        Returns:
+            bool: True if edge was updated, False if edge doesn't exist
+        """
+        if vertex1 not in self.graph or vertex2 not in self.graph:
+            return False
+
+        updated = False
+
+        # Update in both directions
+        for i, (neighbor, _) in enumerate(self.graph[vertex1]):
+            if neighbor == vertex2:
+                self.graph[vertex1][i] = (neighbor, new_weight)
+                updated = True
+                break
+
+        if updated:
+            for i, (neighbor, _) in enumerate(self.graph[vertex2]):
+                if neighbor == vertex1:
+                    self.graph[vertex2][i] = (neighbor, new_weight)
+                    break
+
+        return updated
+
     def is_empty(self) -> bool:
         """
         Check if the graph has any vertices.
@@ -103,6 +217,22 @@ class UndirectedGraph(Generic[V, W]):
         Time Complexity: O(1)
         """
         return len(self.graph) == 0
+
+    def clear(self) -> None:
+        """
+        Remove all vertices and edges from the graph.
+
+        Time Complexity: O(1)
+        """
+        self.graph.clear()
+
+    def __contains__(self, vertex: V) -> bool:
+        """
+        Check if a vertex is in the graph. Allows 'if vertex in graph:'.
+
+        Time Complexity: O(1)
+        """
+        return vertex in self.graph
 
     def __str__(self) -> str:
         """
