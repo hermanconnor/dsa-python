@@ -407,3 +407,134 @@ class TestTraversal:
 
         with pytest.raises(ValueError, match="Vertex 1 not in graph"):
             graph.bfs(1)
+
+
+class TestCycleDetection:
+    """Test cycle detection."""
+
+    def test_has_cycle_simple_cycle(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2)
+        graph.add_edge(2, 3)
+        graph.add_edge(3, 1)  # Creates cycle
+
+        assert graph.has_cycle()
+
+    def test_has_cycle_no_cycle_tree(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2)
+        graph.add_edge(2, 3)
+        graph.add_edge(2, 4)
+
+        assert not graph.has_cycle()
+
+    def test_has_cycle_empty_graph(self):
+        graph = UndirectedGraph()
+
+        assert not graph.has_cycle()
+
+    def test_has_cycle_single_vertex(self):
+        graph = UndirectedGraph()
+
+        graph.add_vertex(1)
+
+        assert not graph.has_cycle()
+
+    def test_has_cycle_two_vertices_no_edge(self):
+        graph = UndirectedGraph()
+
+        graph.add_vertex(1)
+        graph.add_vertex(2)
+
+        assert not graph.has_cycle()
+
+    def test_has_cycle_complex(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2)
+        graph.add_edge(1, 3)
+        graph.add_edge(2, 4)
+        graph.add_edge(2, 5)
+
+        assert not graph.has_cycle()
+
+        # Add edge to create cycle
+        graph.add_edge(4, 5)
+        assert graph.has_cycle()
+
+
+class TestConnectivity:
+    """Test connectivity-related methods."""
+
+    def test_connected_components_single_component(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2)
+        graph.add_edge(2, 3)
+        graph.add_edge(3, 4)
+
+        components = graph.connected_components()
+
+        assert len(components) == 1
+        assert set(components[0]) == {1, 2, 3, 4}
+
+    def test_connected_components_multiple_components(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2)
+        graph.add_edge(3, 4)
+        graph.add_edge(5, 6)
+
+        components = graph.connected_components()
+        assert len(components) == 3
+
+        component_sets = [set(c) for c in components]
+        assert {1, 2} in component_sets
+        assert {3, 4} in component_sets
+        assert {5, 6} in component_sets
+
+    def test_connected_components_isolated_vertices(self):
+        graph = UndirectedGraph()
+
+        graph.add_vertex(1)
+        graph.add_vertex(2)
+        graph.add_vertex(3)
+
+        components = graph.connected_components()
+        assert len(components) == 3
+
+    def test_connected_components_empty_graph(self):
+        graph = UndirectedGraph()
+
+        components = graph.connected_components()
+        assert len(components) == 0
+
+    def test_is_connected_true(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2)
+        graph.add_edge(2, 3)
+        graph.add_edge(3, 4)
+
+        assert graph.is_connected()
+
+    def test_is_connected_false(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2)
+        graph.add_edge(3, 4)
+
+        assert not graph.is_connected()
+
+    def test_is_connected_empty_graph(self):
+        graph = UndirectedGraph()
+
+        assert graph.is_connected()  # Empty graph is trivially connected
+
+    def test_is_connected_single_vertex(self):
+        graph = UndirectedGraph()
+
+        graph.add_vertex(1)
+        assert graph.is_connected()

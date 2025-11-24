@@ -224,29 +224,6 @@ class UndirectedGraph(Generic[V, W]):
 
         return len(self.graph[vertex])
 
-    def copy(self) -> 'UndirectedGraph[V, W]':
-        """
-        Create a deep copy of the graph.
-
-        Time Complexity: O(V + E)
-        """
-        new_graph = UndirectedGraph()
-
-        # Add all vertices
-        for vertex in self.graph:
-            new_graph.add_vertex(vertex)
-
-        # Add all edges (each edge appears twice in adjacency list)
-        seen = set()
-        for vertex1 in self.graph:
-            for vertex2, weight in self.graph[vertex1]:
-                edge = frozenset([vertex1, vertex2])
-                if edge not in seen:
-                    seen.add(edge)
-                    new_graph.add_edge(vertex1, vertex2, weight)
-
-        return new_graph
-
     def dfs(self, start_vertex: V) -> List[V]:
         """
         Depth-First Search traversal starting from start_vertex (iterative).
@@ -306,6 +283,100 @@ class UndirectedGraph(Generic[V, W]):
                         queue.append(neighbor)
 
         return result
+
+    def has_cycle(self) -> bool:
+        """
+        Check if the graph has a cycle using DFS.
+
+        Time Complexity: O(V + E)
+        """
+        visited: Set[V] = set()
+
+        def dfs_visit(vertex: V, parent: V | None) -> bool:
+            visited.add(vertex)
+
+            for neighbor, _ in self.graph[vertex]:
+                if neighbor not in visited:
+                    if dfs_visit(neighbor, vertex):
+                        return True
+                # If neighbor is visited and not the parent, cycle found
+                elif neighbor != parent:
+                    return True
+
+            return False
+
+        for vertex in self.graph:
+            if vertex not in visited:
+                if dfs_visit(vertex, None):
+                    return True
+
+        return False
+
+    def connected_components(self) -> List[List[V]]:
+        """
+        Find all connected components in the graph.
+
+        Time Complexity: O(V + E)
+
+        Returns:
+            List of lists, where each inner list contains vertices in a component
+        """
+        visited: Set[V] = set()
+        components = []
+
+        def dfs_component(vertex: V, component: List[V]) -> None:
+            visited.add(vertex)
+            component.append(vertex)
+
+            for neighbor, _ in self.graph[vertex]:
+                if neighbor not in visited:
+                    dfs_component(neighbor, component)
+
+        for vertex in self.graph:
+            if vertex not in visited:
+                component = []
+                dfs_component(vertex, component)
+                components.append(component)
+
+        return components
+
+    def is_connected(self) -> bool:
+        """
+        Check if the graph is connected (all vertices reachable from any vertex).
+
+        Time Complexity: O(V + E)
+        """
+        if not self.graph:
+            return True
+
+        # Start DFS from any vertex
+        start_vertex = next(iter(self.graph))
+        visited = set(self.dfs(start_vertex))
+
+        return len(visited) == len(self.graph)
+
+    def copy(self) -> 'UndirectedGraph[V, W]':
+        """
+        Create a deep copy of the graph.
+
+        Time Complexity: O(V + E)
+        """
+        new_graph = UndirectedGraph()
+
+        # Add all vertices
+        for vertex in self.graph:
+            new_graph.add_vertex(vertex)
+
+        # Add all edges (each edge appears twice in adjacency list)
+        seen = set()
+        for vertex1 in self.graph:
+            for vertex2, weight in self.graph[vertex1]:
+                edge = frozenset([vertex1, vertex2])
+                if edge not in seen:
+                    seen.add(edge)
+                    new_graph.add_edge(vertex1, vertex2, weight)
+
+        return new_graph
 
     def is_empty(self) -> bool:
         """
