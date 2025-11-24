@@ -224,6 +224,89 @@ class UndirectedGraph(Generic[V, W]):
 
         return len(self.graph[vertex])
 
+    def copy(self) -> 'UndirectedGraph[V, W]':
+        """
+        Create a deep copy of the graph.
+
+        Time Complexity: O(V + E)
+        """
+        new_graph = UndirectedGraph()
+
+        # Add all vertices
+        for vertex in self.graph:
+            new_graph.add_vertex(vertex)
+
+        # Add all edges (each edge appears twice in adjacency list)
+        seen = set()
+        for vertex1 in self.graph:
+            for vertex2, weight in self.graph[vertex1]:
+                edge = frozenset([vertex1, vertex2])
+                if edge not in seen:
+                    seen.add(edge)
+                    new_graph.add_edge(vertex1, vertex2, weight)
+
+        return new_graph
+
+    def dfs(self, start_vertex: V) -> List[V]:
+        """
+        Depth-First Search traversal starting from start_vertex (iterative).
+        Returns list of vertices in DFS order.
+
+        Time Complexity: O(V + E)
+
+        Raises:
+            ValueError: If start_vertex not in graph
+        """
+        if start_vertex not in self.graph:
+            raise ValueError(f"Vertex {start_vertex} not in graph")
+
+        visited: Set[V] = set()
+        stack = [start_vertex]
+        result = []
+
+        while stack:
+            vertex = stack.pop()
+
+            if vertex not in visited:
+                visited.add(vertex)
+                result.append(vertex)
+                # Add neighbors in reverse to maintain left-to-right order
+                for neighbor, _ in reversed(self.graph[vertex]):
+                    if neighbor not in visited:
+                        stack.append(neighbor)
+
+        return result
+
+    def bfs(self, start_vertex: V) -> List[V]:
+        """
+        Breadth-First Search traversal starting from start_vertex.
+        Returns list of vertices in BFS order.
+
+        Time Complexity: O(V + E)
+
+        Raises:
+            ValueError: If start_vertex not in graph
+        """
+        if start_vertex not in self.graph:
+            raise ValueError(f"Vertex {start_vertex} not in graph")
+
+        visited: Set[V] = set()
+        queue: Deque[V] = deque([start_vertex])
+        result = []
+
+        while queue:
+            vertex = queue.popleft()
+
+            if vertex not in visited:
+                visited.add(vertex)
+                result.append(vertex)
+
+                for neighbor, _ in self.graph[vertex]:
+                    if neighbor not in visited:
+                        queue.append(neighbor)
+
+        return result
+
     def is_empty(self) -> bool:
         """
         Check if the graph has any vertices.

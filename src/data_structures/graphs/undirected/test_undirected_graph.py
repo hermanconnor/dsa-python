@@ -292,3 +292,118 @@ class TestNeighborsAndDegree:
 
         with pytest.raises(ValueError, match="Vertex 1 not in graph"):
             graph.degree(1)
+
+
+class TestUtilityMethods:
+    """Test utility methods like copy, clear, etc."""
+
+    def test_copy(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2, 5)
+        graph.add_edge(2, 3, 10)
+
+        copied = graph.copy()
+
+        # Check structure is identical
+        assert set(copied.get_vertices()) == set(graph.get_vertices())
+        assert copied.has_edge(1, 2)
+        assert copied.get_edge_weight(1, 2) == 5
+
+        # Modify original and ensure copy is unaffected
+        graph.add_edge(3, 4)
+        assert not copied.has_edge(3, 4)
+        assert 4 not in copied
+
+    def test_clear(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2)
+        graph.add_edge(2, 3)
+
+        graph.clear()
+
+        assert graph.is_empty()
+        assert len(graph.get_vertices()) == 0
+        assert len(graph.get_edges()) == 0
+
+    def test_is_empty(self):
+        graph = UndirectedGraph()
+
+        assert graph.is_empty()
+
+        graph.add_vertex(1)
+        assert not graph.is_empty()
+
+        graph.remove_vertex(1)
+        assert graph.is_empty()
+
+
+class TestTraversal:
+    """Test DFS and BFS traversal algorithms."""
+
+    def test_dfs_simple_path(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2)
+        graph.add_edge(2, 3)
+        graph.add_edge(3, 4)
+
+        result = graph.dfs(1)
+
+        assert len(result) == 4
+        assert result[0] == 1
+        assert set(result) == {1, 2, 3, 4}
+
+    def test_dfs_disconnected_component(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2)
+        graph.add_edge(3, 4)  # Separate component
+
+        result = graph.dfs(1)
+
+        assert set(result) == {1, 2}
+        assert 3 not in result
+        assert 4 not in result
+
+    def test_dfs_nonexistent_start(self):
+        graph = UndirectedGraph()
+
+        with pytest.raises(ValueError, match="Vertex 1 not in graph"):
+            graph.dfs(1)
+
+    def test_bfs_simple_path(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2)
+        graph.add_edge(2, 3)
+        graph.add_edge(3, 4)
+
+        result = graph.bfs(1)
+
+        assert len(result) == 4
+        assert result[0] == 1
+        assert set(result) == {1, 2, 3, 4}
+
+    def test_bfs_level_order(self):
+        graph = UndirectedGraph()
+
+        graph.add_edge(1, 2)
+        graph.add_edge(1, 3)
+        graph.add_edge(2, 4)
+        graph.add_edge(2, 5)
+
+        result = graph.bfs(1)
+        assert result[0] == 1
+        # Level 1: 2 and 3 should come before level 2
+        assert result.index(2) < result.index(4)
+        assert result.index(2) < result.index(5)
+        assert result.index(3) < result.index(4)
+        assert result.index(3) < result.index(5)
+
+    def test_bfs_nonexistent_start(self):
+        graph = UndirectedGraph()
+
+        with pytest.raises(ValueError, match="Vertex 1 not in graph"):
+            graph.bfs(1)
