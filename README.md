@@ -21,8 +21,8 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 - [x] Deque (Circular)
 - [x] Graph (Directed Adjacency List)
 - [x] Graph (Undirected Adjacency List)
-- [ ] Graph (Directed Adjacency Matrix)
-- [ ] Graph (Undirected Adjacency Matrix)
+- [x] Graph (Directed Adjacency Matrix)
+- [x] Graph (Undirected Adjacency Matrix)
 - [ ] Tree (Binary Search Tree)
 
 ## 🎯 My Learning Goals
