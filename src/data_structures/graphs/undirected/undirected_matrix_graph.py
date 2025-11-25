@@ -65,11 +65,28 @@ class UndirectedMatrixGraph:
         return [(v, self.matrix[u][v]) for v in range(self.num_vertices)
                 if self.matrix[u][v] is not None]
 
-    def get_degree(self):
-        pass
+    def get_degree(self, v):
+        """
+        Returns the degree (number of edges) connected to vertex v.
+        Time Complexity: O(V) where V is the number of vertices
+        """
+        self._validate_vertex(v)
+        return sum(1 for u in range(self.num_vertices)
+                   if self.matrix[v][u] is not None)
 
-    def get_all_edges(self):
-        pass
+    def get_edges(self):
+        """
+        Returns a list of all edges as (u, v, weight) tuples.
+        Each edge appears once (only includes u < v to avoid duplicates).
+        Time Complexity: O(V²) where V is the number of vertices
+        """
+        edges = []
+
+        for u in range(self.num_vertices):
+            for v in range(u + 1, self.num_vertices):  # Only check upper triangle
+                if self.matrix[u][v] is not None:
+                    edges.append((u, v, self.matrix[u][v]))
+        return edges
 
     def _validate_vertex(self, v):
         """Validates a single vertex index."""

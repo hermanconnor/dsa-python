@@ -259,3 +259,125 @@ class TestGetNeighbors:
         neighbors = g.get_neighbors(1)
 
         assert (1, 5) in neighbors
+
+
+class TestGetDegree:
+    """Tests for vertex degree calculation."""
+
+    def test_degree_isolated_vertex(self):
+        """Test degree of isolated vertex."""
+        g = UndirectedMatrixGraph(4)
+
+        assert g.get_degree(2) == 0
+
+    def test_degree_single_edge(self):
+        """Test degree with one edge."""
+        g = UndirectedMatrixGraph(4)
+
+        g.add_edge(0, 1, 5)
+
+        assert g.get_degree(0) == 1
+        assert g.get_degree(1) == 1
+
+    def test_degree_multiple_edges(self):
+        """Test degree with multiple edges."""
+        g = UndirectedMatrixGraph(5)
+
+        g.add_edge(2, 0, 1)
+        g.add_edge(2, 1, 1)
+        g.add_edge(2, 3, 1)
+        g.add_edge(2, 4, 1)
+
+        assert g.get_degree(2) == 4
+
+    def test_degree_self_loop(self):
+        """Test that self-loop contributes to degree."""
+        g = UndirectedMatrixGraph(3)
+
+        g.add_edge(1, 1, 5)
+
+        assert g.get_degree(1) == 1
+
+
+class TestGetEdges:
+    """Tests for retrieving all edges."""
+
+    def test_get_edges_empty_graph(self):
+        """Test getting edges from empty graph."""
+        g = UndirectedMatrixGraph(3)
+
+        edges = g.get_edges()
+
+        assert len(edges) == 0
+
+    def test_get_edges_single_edge(self):
+        """Test getting single edge."""
+        g = UndirectedMatrixGraph(3)
+
+        g.add_edge(0, 2, 10)
+        edges = g.get_edges()
+
+        assert len(edges) == 1
+        assert (0, 2, 10) in edges
+
+    def test_get_edges_multiple(self):
+        """Test getting multiple edges."""
+        g = UndirectedMatrixGraph(4)
+
+        g.add_edge(0, 1, 5)
+        g.add_edge(1, 2, 7)
+        g.add_edge(2, 3, 3)
+        edges = g.get_edges()
+
+        assert len(edges) == 3
+        assert (0, 1, 5) in edges
+        assert (1, 2, 7) in edges
+        assert (2, 3, 3) in edges
+
+    def test_get_edges_no_duplicates(self):
+        """Test that edges aren't duplicated (e.g., both (0,1) and (1,0))."""
+        g = UndirectedMatrixGraph(3)
+
+        g.add_edge(0, 1, 5)
+        g.add_edge(1, 2, 7)
+        edges = g.get_edges()
+
+        assert len(edges) == 2
+        # Ensure we don't have both directions
+        edge_pairs = [(u, v) for u, v, w in edges]
+        assert (0, 1) in edge_pairs or (1, 0) in edge_pairs
+        assert not ((0, 1) in edge_pairs and (1, 0) in edge_pairs)
+
+
+class TestStringRepresentation:
+    """Tests for string and repr methods."""
+
+    def test_str_empty_graph(self):
+        """Test string representation of empty graph."""
+        g = UndirectedMatrixGraph(3)
+
+        s = str(g)
+
+        assert "3 vertices" in s
+        assert "0 edges" in s
+
+    def test_str_with_edges(self):
+        """Test string representation with edges."""
+        g = UndirectedMatrixGraph(3)
+
+        g.add_edge(0, 1, 5)
+        g.add_edge(1, 2, 3)
+        s = str(g)
+
+        assert "3 vertices" in s
+        assert "2 edges" in s
+        assert "--" in s  # Undirected edge notation
+
+    def test_repr(self):
+        """Test repr representation."""
+        g = UndirectedMatrixGraph(5)
+
+        r = repr(g)
+
+        assert "UndirectedMatrixGraph" in r
+        assert "5" in r
