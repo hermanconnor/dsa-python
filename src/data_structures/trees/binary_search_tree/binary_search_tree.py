@@ -1,3 +1,4 @@
+from collections import deque
 from typing import Generic, List, Optional, Deque, TypeVar, Iterator
 
 T = TypeVar('T')
@@ -85,17 +86,85 @@ class BinarySearchTree(Generic[T]):
     def delete(self):
         pass
 
-    def preorder_traversal(self):
-        pass
+    def preorder_traversal(self) -> List[T]:
+        """
+        Performs a preorder traversal (Root-Left-Right).
 
-    def inorder_traversal(self):
-        pass
+        Time Complexity: O(n).
+        """
+        result: List[T] = []
+        self._preorder_recursive(self.root, result)
+        return result
 
-    def postorder_traversal(self):
-        pass
+    def _preorder_recursive(self, node: Optional[TreeNode[T]], result: List[T]) -> None:
+        """Recursively performs preorder traversal."""
+        if node:
+            result.append(node.value)
+            self._preorder_recursive(node.left, result)
+            self._preorder_recursive(node.right, result)
 
-    def levelorder_traversal(self):
-        pass
+    def inorder_traversal(self) -> List[T]:
+        """
+        Performs an inorder traversal (Left-Root-Right). Returns a sorted list.
+
+        Time Complexity: O(n).
+        """
+        result: List[T] = []
+        self._inorder_recursive(self.root, result)
+        return result
+
+    def _inorder_recursive(self, node: Optional[TreeNode[T]], result: List[T]) -> None:
+        """Recursively performs inorder traversal."""
+        if node:
+            self._inorder_recursive(node.left, result)
+            result.append(node.value)
+            self._inorder_recursive(node.right, result)
+
+    def postorder_traversal(self) -> List[T]:
+        """
+        Performs a postorder traversal (Left-Right-Root).
+
+        Time Complexity: O(n).
+        """
+        result: List[T] = []
+        self._postorder_recursive(self.root, result)
+        return result
+
+    def _postorder_recursive(self, node: Optional[TreeNode[T]], result: List[T]) -> None:
+        """Recursively performs postorder traversal."""
+        if node:
+            self._postorder_recursive(node.left, result)
+            self._postorder_recursive(node.right, result)
+            result.append(node.value)
+
+    def levelorder_traversal(self) -> List[List[T]]:
+        """
+        Performs a level-order traversal (Breadth-First Search). Returns a list of levels.
+
+        Time Complexity: O(n).
+        """
+        if not self.root:
+            return []
+
+        result: List[List[T]] = []
+        queue: Deque[TreeNode[T]] = deque([self.root])
+
+        while queue:
+            level_size = len(queue)
+            current_level: List[T] = []
+
+            for _ in range(level_size):
+                node = queue.popleft()
+                current_level.append(node.value)
+
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+
+            result.append(current_level)
+
+        return result
 
     def height(self) -> int:
         """
@@ -169,8 +238,17 @@ class BinarySearchTree(Generic[T]):
         """
         return self.search(value)
 
-    def __str__(self):
-        pass
+    def __iter__(self) -> Iterator[T]:
+        """
+        Returns an iterator over tree values (inorder traversal).
+
+        Time Complexity: O(n) for full iteration.
+        """
+        return iter(self.inorder_traversal())
+
+    def __str__(self) -> str:
+        """Returns a string representation of the BST (inorder traversal)."""
+        return f"BinarySearchTree(inorder={self.inorder_traversal()})"
 
     def __repr__(self) -> str:
         """Returns a more detailed string representation for debugging."""

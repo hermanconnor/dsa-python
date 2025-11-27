@@ -186,3 +186,47 @@ class TestBSTSearch:
         assert 5 in tree
         assert 3 in tree
         assert 10 not in tree
+
+
+class TestBSTTraversals:
+    """Tests for tree traversal methods."""
+
+    @pytest.fixture
+    def sample_tree(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert_many([5, 3, 7, 1, 4, 6, 9])
+
+        return tree
+
+    def test_inorder_traversal(self, sample_tree):
+        assert sample_tree.inorder_traversal() == [1, 3, 4, 5, 6, 7, 9]
+
+    def test_preorder_traversal(self, sample_tree):
+        assert sample_tree.preorder_traversal() == [5, 3, 1, 4, 7, 6, 9]
+
+    def test_postorder_traversal(self, sample_tree):
+        assert sample_tree.postorder_traversal() == [1, 4, 3, 6, 9, 7, 5]
+
+    def test_levelorder_traversal(self, sample_tree):
+        expected = [[5], [3, 7], [1, 4, 6, 9]]
+
+        assert sample_tree.levelorder_traversal() == expected
+
+    def test_empty_tree_traversals(self):
+        tree = BinarySearchTree[int]()
+
+        assert tree.inorder_traversal() == []
+        assert tree.preorder_traversal() == []
+        assert tree.postorder_traversal() == []
+        assert tree.levelorder_traversal() == []
+
+    def test_single_node_traversals(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert(5)
+
+        assert tree.inorder_traversal() == [5]
+        assert tree.preorder_traversal() == [5]
+        assert tree.postorder_traversal() == [5]
+        assert tree.levelorder_traversal() == [[5]]
