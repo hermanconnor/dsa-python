@@ -26,6 +26,7 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 - [x] Tree (Binary Search Tree)
 - [x] Heap (Min Heap)
 - [x] Heap (Max Heap)
+- [ ] Priority Queue
 
 ## 🎯 My Learning Goals
 
