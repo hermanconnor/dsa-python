@@ -72,6 +72,25 @@ class TestBSTMagicMethods:
 
         assert len(tree) == 5
 
+    def test_bool_empty_tree(self):
+        tree = BinarySearchTree[int]()
+
+        assert not tree
+
+    def test_bool_non_empty_tree(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert(5)
+
+        assert tree
+
+    def test_str_representation(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert_many([5, 3, 7])
+
+        assert str(tree) == "BinarySearchTree(inorder=[3, 5, 7])"
+
     def test_repr_representation(self):
         tree = BinarySearchTree[int]()
 
@@ -230,3 +249,130 @@ class TestBSTTraversals:
         assert tree.preorder_traversal() == [5]
         assert tree.postorder_traversal() == [5]
         assert tree.levelorder_traversal() == [[5]]
+
+
+class TestBSTDelete:
+    """Tests for delete operations."""
+
+    def test_delete_from_empty_tree(self):
+        tree = BinarySearchTree[int]()
+
+        with pytest.raises(ValueError, match="Cannot delete from an empty tree"):
+            tree.delete(5)
+
+    def test_delete_non_existing_value(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert(5)
+
+        with pytest.raises(ValueError, match="Value 10 not found in tree"):
+            tree.delete(10)
+
+    def test_delete_leaf_node(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert_many([5, 3, 7])
+        tree.delete(3)
+
+        assert 3 not in tree
+        assert len(tree) == 2
+        assert tree.inorder_traversal() == [5, 7]
+
+    def test_delete_node_with_one_child(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert_many([5, 3, 7, 6])
+        tree.delete(7)
+
+        assert 7 not in tree
+        assert 6 in tree
+        assert len(tree) == 3
+        assert tree.inorder_traversal() == [3, 5, 6]
+
+    def test_delete_node_with_two_children(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert_many([5, 3, 7, 1, 4, 6, 9])
+        tree.delete(3)
+
+        assert 3 not in tree
+        assert len(tree) == 6
+        assert tree.inorder_traversal() == [1, 4, 5, 6, 7, 9]
+
+    def test_delete_root_node(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert_many([5, 3, 7])
+        tree.delete(5)
+
+        assert 5 not in tree
+        assert len(tree) == 2
+        assert tree.inorder_traversal() == [3, 7]
+
+
+class TestBSTBalance:
+    """Tests for balance checking."""
+
+    def test_empty_tree_balanced(self):
+        tree = BinarySearchTree[int]()
+
+        assert tree.is_balanced()
+
+    def test_single_node_balanced(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert(5)
+
+        assert tree.is_balanced()
+
+    def test_balanced_tree(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert_many([5, 3, 7, 1, 4, 6, 9])
+
+        assert tree.is_balanced()
+
+    def test_unbalanced_tree(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert_many([1, 2, 3, 4, 5])  # Right-skewed tree
+
+        assert not tree.is_balanced()
+
+    def test_slightly_unbalanced_tree(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert_many([5, 3, 7, 1, 4, 9])
+        tree.delete(9)
+
+        assert tree.is_balanced()  # Still balanced (diff <= 1)
+
+
+class TestBSTIterator:
+    """Tests for iterator protocol."""
+
+    def test_iterate_empty_tree(self):
+        tree = BinarySearchTree[int]()
+
+        values = list(tree)
+
+        assert values == []
+
+    def test_iterate_tree(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert_many([5, 3, 7, 1, 9])
+        values = list(tree)
+
+        assert values == [1, 3, 5, 7, 9]  # Inorder traversal
+
+    def test_for_loop(self):
+        tree = BinarySearchTree[int]()
+
+        tree.insert_many([5, 3, 7])
+
+        result = []
+        for value in tree:
+            result.append(value)
+
+        assert result == [3, 5, 7]

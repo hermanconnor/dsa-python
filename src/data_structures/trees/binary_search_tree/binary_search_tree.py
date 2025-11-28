@@ -83,8 +83,55 @@ class BinarySearchTree(Generic[T]):
 
         return False
 
-    def delete(self):
-        pass
+    def delete(self, value: T) -> None:
+        """
+        Deletes a node with the given value from the binary search tree.
+
+        Time Complexity: O(log n) average, O(n) worst-case (unbalanced tree).
+        Raises:
+            ValueError: If the tree is empty or value not found.
+        """
+        if self.root is None:
+            raise ValueError("Cannot delete from an empty tree")
+
+        self.root = self._delete_recursive(self.root, value)
+
+    def _delete_recursive(self, node: Optional[TreeNode[T]], value: T) -> Optional[TreeNode[T]]:
+        """Recursively deletes a node with the given value."""
+        if node is None:
+            raise ValueError(f"Value {value} not found in tree")
+
+        # 1. Search for the node to delete
+        if value < node.value:
+            node.left = self._delete_recursive(node.left, value)
+        elif value > node.value:
+            node.right = self._delete_recursive(node.right, value)
+        # 2. Node to be deleted found
+        else:
+            # Case 1 & 2: Node has 0 or 1 child
+            if node.left is None:
+                return node.right
+            elif node.right is None:
+                return node.left
+
+            # Case 3: Node has two children
+            # Find the in-order successor (smallest in the right subtree)
+            successor = self._find_min_node(node.right)
+
+            # Copy the successor's content to this node
+            node.value = successor.value
+
+            # Delete the original successor node from the right subtree
+            node.right = self._delete_recursive(node.right, successor.value)
+
+        return node
+
+    def _find_min_node(self, node: TreeNode[T]) -> TreeNode[T]:
+        """Finds the node with the minimum value in a subtree."""
+        current = node
+        while current.left is not None:
+            current = current.left
+        return current
 
     def preorder_traversal(self) -> List[T]:
         """
@@ -213,8 +260,31 @@ class BinarySearchTree(Generic[T]):
             current = current.right
         return current.value
 
-    def is_balanced(self):
-        pass
+    def is_balanced(self) -> bool:
+        """
+        Checks if the tree is balanced (height difference <= 1 for all nodes).
+
+        Time Complexity: O(n).
+        """
+        def check_balance(node: Optional[TreeNode[T]]) -> tuple[bool, int]:
+            """Returns (is_balanced, height)."""
+            if node is None:
+                return (True, 0)
+
+            left_balanced, left_height = check_balance(node.left)
+            if not left_balanced:
+                return (False, 0)
+
+            right_balanced, right_height = check_balance(node.right)
+            if not right_balanced:
+                return (False, 0)
+
+            balanced = abs(left_height - right_height) <= 1
+            height = 1 + max(left_height, right_height)
+
+            return (balanced, height)
+
+        return check_balance(self.root)[0]
 
     def _size_recursive(self, node: Optional[TreeNode[T]]) -> int:
         """Recursively calculates the number of nodes in a subtree."""
