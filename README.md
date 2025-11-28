@@ -23,7 +23,9 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 - [x] Graph (Undirected Adjacency List)
 - [x] Graph (Directed Adjacency Matrix)
 - [x] Graph (Undirected Adjacency Matrix)
-- [ ] Tree (Binary Search Tree)
+- [x] Tree (Binary Search Tree)
+- [x] Heap (Min Heap)
+- [ ] Heap (Max Heap)
 
 ## 🎯 My Learning Goals
 
