@@ -92,22 +92,122 @@ class MaxHeap(Generic[T]):
         self.heap[index1], self.heap[index2] = self.heap[index2], self.heap[index1]
 
     def _heapify_up(self, index: Optional[int] = None) -> None:
-        pass
+        """
+        Bubble up an element to maintain heap property.
+
+        Args:
+            index: Starting index (defaults to last element).
+
+        Time complexity: O(log n) where n is the number of elements in the heap.
+        """
+        if index is None:
+            index = len(self.heap) - 1
+
+        while (self.has_parent(index) and
+               self.key(self.heap[index]) > self.key(self.heap[self.parent(index)])):
+            self._swap(index, self.parent(index))
+            index = self.parent(index)
 
     def _heapify_down(self, index: int = 0) -> None:
-        pass
+        """
+        Bubble down from a specific index to maintain heap property.
+
+        Args:
+            index: Starting index (defaults to root).
+
+        Time complexity: O(log n) where n is the number of elements in the heap.
+        """
+        element_to_sift = self.heap[index]
+        key_to_sift = self.key(element_to_sift)
+
+        while self.has_left_child(index):
+            larger_child_index = self.left_child(index)
+
+            if (self.has_right_child(index) and
+                    self.key(self.heap[self.right_child(index)]) > self.key(self.heap[larger_child_index])):
+                larger_child_index = self.right_child(index)
+
+            if key_to_sift >= self.key(self.heap[larger_child_index]):
+                break
+
+            self._swap(index, larger_child_index)
+            index = larger_child_index
 
     def insert(self, value: T) -> None:
-        pass
+        """
+        Insert a new value into the heap.
+
+        Args:
+            value: The value to insert.
+
+        Time complexity: O(log n) where n is the number of elements in the heap.
+        """
+        self.heap.append(value)
+        self._heapify_up()
 
     def build_heap(self, arr: List[T]) -> None:
-        pass
+        """
+        Build a heap from an array of values.
+
+        Args:
+            arr: List of values to build the heap from.
+
+        Time complexity: O(n) where n is the number of elements in the array.
+        """
+        self.heap = arr.copy()
+
+        for i in range(len(self.heap) // 2 - 1, -1, -1):
+            self._heapify_down(i)
 
     def extract_max(self) -> T:
-        pass
+        """
+        Remove and return the maximum element (root).
+
+        Returns:
+            The maximum element in the heap.
+
+        Raises:
+            IndexError: If the heap is empty.
+
+        Time complexity: O(log n) where n is the number of elements in the heap.
+        """
+        if not self.heap:
+            raise IndexError("Heap is empty")
+
+        if len(self.heap) == 1:
+            return self.heap.pop()
+
+        max_value = self.heap[0]
+        self.heap[0] = self.heap.pop()
+
+        self._heapify_down()
+
+        return max_value
 
     def replace(self, value: T) -> T:
-        pass
+        """
+        Pop maximum and insert new value in one operation.
+        More efficient than calling extract_max() followed by insert().
+
+        Args:
+            value: The new value to insert.
+
+        Returns:
+            The maximum element that was removed.
+
+        Raises:
+            IndexError: If the heap is empty.
+
+        Time complexity: O(log n) where n is the number of elements in the heap.
+        """
+        if not self.heap:
+            raise IndexError("Heap is empty")
+
+        max_value = self.heap[0]
+        self.heap[0] = value
+        self._heapify_down()
+
+        return max_value
 
     def __len__(self) -> int:
         """
