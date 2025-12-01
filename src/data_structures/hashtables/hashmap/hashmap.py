@@ -80,14 +80,48 @@ class HashMap(Generic[K, V]):
 
         raise KeyError(f"Key '{key}' not found")
 
-    def keys(self):
-        pass
+    def keys(self) -> List[K]:
+        """
+        Return all keys.
 
-    def values(self):
-        pass
+        Time Complexity: O(n)
+        Space Complexity: O(n)
+        """
+        result = []
 
-    def items(self):
-        pass
+        for bucket in self.buckets:
+            for k, v in bucket:
+                result.append(k)
+
+        return result
+
+    def values(self) -> List[V]:
+        """
+        Return all values.
+
+        Time Complexity: O(n)
+        """
+        result = []
+
+        for bucket in self.buckets:
+            for k, v in bucket:
+                result.append(v)
+
+        return result
+
+    def items(self) -> List[Tuple[K, V]]:
+        """
+        Return all key-value pairs.
+
+        Time Complexity: O(n)
+        """
+        result = []
+
+        for bucket in self.buckets:
+            for k, v in bucket:
+                result.append((k, v))
+
+        return result
 
     def remove(self, key: K) -> V:
         """
@@ -127,7 +161,20 @@ class HashMap(Generic[K, V]):
         return self.size
 
     def __str__(self) -> str:
-        pass
+        """
+        String representation.
+
+        Time Complexity: O(n)
+        """
+        items = self.items()
+        return "{" + ", ".join(f"'{k}': {v}" for k, v in items) + "}"
 
     def __repr__(self) -> str:
-        pass
+        """
+        Official string representation for debugging.
+
+        Time Complexity: O(n)
+        """
+        items = self.items()
+        items_str = ", ".join(f"{k!r}: {v!r}" for k, v in items)
+        return f"HashMap({{{items_str}}}, size={self.size}, capacity={self.capacity})"
