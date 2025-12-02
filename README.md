@@ -9,25 +9,19 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 
 ## 📚 Data Structures
 
-- [x] Array / Dynamic Array
-- [x] Multiset (Bag)
+- [x] Dynamic Array
+- [x] Multiset(Bag)
 - [x] Stack
-- [x] Queue
-- [x] Queue (Circular)
-- [x] Queue (Two Stacks)
-- [x] Linked List (Singly)
-- [x] Linked List (Doubly)
-- [x] Deque
-- [x] Deque (Circular)
-- [x] Graph (Directed Adjacency List)
-- [x] Graph (Undirected Adjacency List)
-- [x] Graph (Directed Adjacency Matrix)
-- [x] Graph (Undirected Adjacency Matrix)
+- [x] Queue / (Circular) / (Two Stacks)
+- [x] Linked List (Singly) / (Doubly)
+- [x] Deque / (Circular)
+- [x] Graph (Directed Adjacency List) / (Undirected Adjacency List)
+- [x] Graph (Directed Adjacency Matrix) / (Undirected Adjacency Matrix)
 - [x] Tree (Binary Search Tree)
-- [x] Heap (Min Heap)
-- [x] Heap (Max Heap)
+- [x] Heap (Min Heap) / (Max Heap)
 - [x] Priority Queue
-- [ ] Hashtables (Hashmap) / (Hashset)
+- [x] Hashtable (Hashmap) / (Hashset)
+- [ ] Union-Find(Disjoint Set)
 
 ## 🎯 My Learning Goals
 
