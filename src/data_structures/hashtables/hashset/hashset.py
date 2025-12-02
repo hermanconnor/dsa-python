@@ -105,16 +105,58 @@ class HashSet(Generic[T]):
         return result
 
     def intersection(self, other: 'HashSet[T]') -> 'HashSet[T]':
-        pass
+        """
+        Return a new set with elements common to both sets.
+
+        Time Complexity: O(min(n, m))
+        """
+        result = HashSet[T]()
+
+        # Iterate through smaller set for efficiency
+        smaller, larger = (self, other) if len(
+            self) <= len(other) else (other, self)
+
+        for element in smaller:
+            if larger.contains(element):
+                result.add(element)
+
+        return result
 
     def difference(self, other: 'HashSet[T]') -> 'HashSet[T]':
-        pass
+        """
+        Return a new set with elements in this set but not in other.
+
+        Time Complexity: O(n)
+        """
+        result = HashSet[T]()
+
+        for element in self:
+            if not other.contains(element):
+                result.add(element)
+
+        return result
 
     def is_subset(self, other: 'HashSet[T]') -> bool:
-        pass
+        """
+        Check if this set is a subset of other.
+
+        Time Complexity: O(n)
+        """
+        if len(self) > len(other):
+            return False
+
+        for element in self:
+            if not other.contains(element):
+                return False
+        return True
 
     def is_superset(self, other: 'HashSet[T]') -> bool:
-        pass
+        """
+        Check if this set is a superset of other.
+
+        Time Complexity: O(m) where m is size of other
+        """
+        return other.is_subset(self)
 
     def contains(self, element: T) -> bool:
         """

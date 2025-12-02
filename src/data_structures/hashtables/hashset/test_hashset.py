@@ -280,3 +280,211 @@ class TestHashSetUnion:
         assert len(result) == 2
         assert 1 in result
         assert 2 in result
+
+
+class TestHashSetIntersection:
+    """Test intersection operation"""
+
+    def test_intersection_common_elements(self):
+        """Test intersection with common elements"""
+        set1 = HashSet[int]()
+        set2 = HashSet[int]()
+
+        for i in [1, 2, 3, 4]:
+            set1.add(i)
+        for i in [3, 4, 5, 6]:
+            set2.add(i)
+
+        result = set1.intersection(set2)
+
+        assert len(result) == 2
+        assert 3 in result
+        assert 4 in result
+
+    def test_intersection_disjoint(self):
+        """Test intersection of disjoint sets"""
+        set1 = HashSet[int]()
+        set2 = HashSet[int]()
+
+        for i in range(5):
+            set1.add(i)
+        for i in range(5, 10):
+            set2.add(i)
+
+        result = set1.intersection(set2)
+
+        assert len(result) == 0
+
+    def test_intersection_empty(self):
+        """Test intersection with empty set"""
+        set1 = HashSet[int]()
+        set2 = HashSet[int]()
+
+        set1.add(1)
+        set1.add(2)
+
+        result = set1.intersection(set2)
+
+        assert len(result) == 0
+
+
+class TestHashSetDifference:
+    """Test difference operation"""
+
+    def test_difference_basic(self):
+        """Test basic difference operation"""
+        set1 = HashSet[int]()
+        set2 = HashSet[int]()
+
+        for i in [1, 2, 3, 4]:
+            set1.add(i)
+        for i in [3, 4, 5, 6]:
+            set2.add(i)
+
+        result = set1.difference(set2)
+
+        assert len(result) == 2
+        assert 1 in result
+        assert 2 in result
+        assert 3 not in result
+        assert 4 not in result
+
+    def test_difference_disjoint(self):
+        """Test difference of disjoint sets"""
+        set1 = HashSet[int]()
+        set2 = HashSet[int]()
+
+        for i in range(5):
+            set1.add(i)
+        for i in range(5, 10):
+            set2.add(i)
+
+        result = set1.difference(set2)
+
+        assert len(result) == 5
+        for i in range(5):
+            assert i in result
+
+    def test_difference_empty(self):
+        """Test difference with empty set"""
+        set1 = HashSet[int]()
+        set2 = HashSet[int]()
+
+        set1.add(1)
+        set1.add(2)
+
+        result = set1.difference(set2)
+
+        assert len(result) == 2
+        assert 1 in result
+        assert 2 in result
+
+
+class TestHashSetSubsetSuperset:
+    """Test subset and superset operations"""
+
+    def test_is_subset_true(self):
+        """Test is_subset when true"""
+        set1 = HashSet[int]()
+        set2 = HashSet[int]()
+
+        for i in [1, 2]:
+            set1.add(i)
+        for i in [1, 2, 3, 4]:
+            set2.add(i)
+
+        assert set1.is_subset(set2)
+
+    def test_is_subset_false(self):
+        """Test is_subset when false"""
+        set1 = HashSet[int]()
+        set2 = HashSet[int]()
+
+        for i in [1, 2, 5]:
+            set1.add(i)
+        for i in [1, 2, 3, 4]:
+            set2.add(i)
+
+        assert not set1.is_subset(set2)
+
+    def test_is_subset_equal(self):
+        """Test is_subset with equal sets"""
+        set1 = HashSet[int]()
+        set2 = HashSet[int]()
+
+        for i in [1, 2, 3]:
+            set1.add(i)
+            set2.add(i)
+
+        assert set1.is_subset(set2)
+
+    def test_is_superset_true(self):
+        """Test is_superset when true"""
+        set1 = HashSet[int]()
+        set2 = HashSet[int]()
+
+        for i in [1, 2, 3, 4]:
+            set1.add(i)
+        for i in [1, 2]:
+            set2.add(i)
+
+        assert set1.is_superset(set2)
+
+    def test_is_superset_false(self):
+        """Test is_superset when false"""
+        set1 = HashSet[int]()
+        set2 = HashSet[int]()
+
+        for i in [1, 2, 3]:
+            set1.add(i)
+        for i in [1, 2, 5]:
+            set2.add(i)
+
+        assert not set1.is_superset(set2)
+
+
+class TestHashSetWithDifferentTypes:
+    """Test HashSet with different data types"""
+
+    def test_string_set(self):
+        """Test with string elements"""
+        hs = HashSet[str]()
+
+        words = ["hello", "world", "python", "test"]
+        for word in words:
+            hs.add(word)
+
+        assert len(hs) == 4
+        for word in words:
+            assert word in hs
+
+    def test_tuple_set(self):
+        """Test with tuple elements"""
+        hs = HashSet[tuple]()
+
+        tuples = [(1, 2), (3, 4), (5, 6)]
+        for t in tuples:
+            hs.add(t)
+
+        assert len(hs) == 3
+        for t in tuples:
+            assert t in hs
+
+    def test_mixed_operations(self):
+        """Test complex operations with strings"""
+        set1 = HashSet[str]()
+        set2 = HashSet[str]()
+
+        for word in ["apple", "banana", "cherry"]:
+            set1.add(word)
+        for word in ["banana", "cherry", "date"]:
+            set2.add(word)
+
+        union = set1.union(set2)
+
+        assert len(union) == 4
+
+        intersection = set1.intersection(set2)
+        assert len(intersection) == 2
+        assert "banana" in intersection
+        assert "cherry" in intersection
