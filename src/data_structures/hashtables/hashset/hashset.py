@@ -62,13 +62,47 @@ class HashSet(Generic[T]):
         return True
 
     def remove(self, element: T) -> bool:
-        pass
+        """
+        Remove an element from the set.
+
+        Returns True if element was removed, False if not found.
+
+        Time Complexity: O(1) average, O(n) worst case
+        """
+        index = self._hash(element)
+        bucket = self.buckets[index]
+
+        try:
+            bucket.remove(element)
+            self.size -= 1
+            return True
+        except ValueError:
+            return False
 
     def clear(self) -> None:
-        pass
+        """
+        Remove all elements from the set.
+
+        Time Complexity: O(n)
+        """
+        self.buckets = [[] for _ in range(self.capacity)]
+        self.size = 0
 
     def union(self, other: 'HashSet[T]') -> 'HashSet[T]':
-        pass
+        """
+        Return a new set with elements from both sets.
+
+        Time Complexity: O(n + m) where n and m are sizes of the sets
+        """
+        result = HashSet[T](max(self.capacity, other.capacity))
+
+        for element in self:
+            result.add(element)
+
+        for element in other:
+            result.add(element)
+
+        return result
 
     def intersection(self, other: 'HashSet[T]') -> 'HashSet[T]':
         pass
