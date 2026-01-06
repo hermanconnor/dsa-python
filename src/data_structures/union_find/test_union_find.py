@@ -163,3 +163,133 @@ class TestUnion:
             uf.union(-1, 0)
         with pytest.raises(IndexError):
             uf.union(0, 10)
+
+
+class TestConnected:
+    """Test connected operation."""
+
+    def test_connected_initially_false(self):
+        """Test elements are not initially connected."""
+        uf = UnionFind(5)
+
+        assert not uf.connected(0, 1)
+        assert not uf.connected(2, 3)
+
+    def test_connected_self(self):
+        """Test element is connected to itself."""
+        uf = UnionFind(5)
+
+        for i in range(5):
+            assert uf.connected(i, i)
+
+    def test_connected_after_union(self):
+        """Test elements are connected after union."""
+        uf = UnionFind(5)
+
+        uf.union(0, 1)
+
+        assert uf.connected(0, 1)
+        assert uf.connected(1, 0)  # Symmetry
+
+    def test_connected_transitive(self):
+        """Test transitivity of connection."""
+        uf = UnionFind(5)
+
+        uf.union(0, 1)
+        uf.union(1, 2)
+
+        assert uf.connected(0, 2)
+        assert not uf.connected(0, 3)
+
+    def test_connected_invalid_indices(self):
+        """Test connected with invalid indices raises IndexError."""
+        uf = UnionFind(5)
+
+        with pytest.raises(IndexError):
+            uf.connected(-1, 0)
+        with pytest.raises(IndexError):
+            uf.connected(0, 5)
+
+
+class TestComponents:
+    """Test component counting and retrieval."""
+
+    def test_components_initial(self):
+        """Test initial component count."""
+        uf = UnionFind(5)
+
+        assert uf.components == 5
+
+    def test_components_after_unions(self):
+        """Test component count decreases after unions."""
+        uf = UnionFind(10)
+        assert uf.components == 10
+
+        uf.union(0, 1)
+        assert uf.components == 9
+
+        uf.union(2, 3)
+        assert uf.components == 8
+
+        uf.union(0, 2)
+        assert uf.components == 7
+
+    def test_components_property(self):
+        """Test components property is read-only."""
+        uf = UnionFind(5)
+        # This should work without error
+        _ = uf.components
+
+        # Verify it's a property (not directly settable without error)
+        # Note: Python doesn't prevent setting, but it's convention
+
+
+class TestGetAllComponents:
+    """Test getting all components."""
+
+    def test_get_all_components_initial(self):
+        """Test getting all components initially."""
+        uf = UnionFind(3)
+        components = uf.get_all_components()
+
+        assert len(components) == 3
+        assert components == {0: [0], 1: [1], 2: [2]}
+
+    def test_get_all_components_after_unions(self):
+        """Test getting all components after unions."""
+        uf = UnionFind(6)
+
+        uf.union(0, 1)
+        uf.union(1, 2)
+        uf.union(3, 4)
+
+        components = uf.get_all_components()
+        assert len(components) == 3
+
+        # Find which root has which elements
+        for root, members in components.items():
+            if len(members) == 3:
+                assert set(members) == {0, 1, 2}
+            elif len(members) == 2:
+                assert set(members) == {3, 4}
+            else:
+                assert members == [5]
+
+    def test_get_all_components_single_component(self):
+        """Test getting components when all are united."""
+        uf = UnionFind(5)
+
+        for i in range(4):
+            uf.union(i, i + 1)
+
+        components = uf.get_all_components()
+        assert len(components) == 1
+        root = list(components.keys())[0]
+        assert set(components[root]) == {0, 1, 2, 3, 4}
+
+    def test_get_all_components_empty(self):
+        """Test getting components from empty UnionFind."""
+        uf = UnionFind(0)
+
+        components = uf.get_all_components()
+        assert components == {}
