@@ -21,7 +21,7 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 - [x] Heap (Min Heap) / (Max Heap)
 - [x] Priority Queue
 - [x] Hashtable (Hashmap) / (Hashset)
-- [ ] Union-Find(Disjoint Set)
+- [x] Union-Find(Disjoint Set)
 
 ## 🎯 My Learning Goals
 

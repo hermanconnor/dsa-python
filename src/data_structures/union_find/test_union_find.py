@@ -293,3 +293,105 @@ class TestGetAllComponents:
 
         components = uf.get_all_components()
         assert components == {}
+
+
+class TestStringRepresentations:
+    """Test __str__ and __repr__ methods."""
+
+    def test_str_initial(self):
+        """Test string representation initially."""
+        uf = UnionFind(3)
+
+        s = str(uf)
+
+        assert "UnionFind with 3 component(s)" in s
+        assert "Set" in s
+
+    def test_str_after_unions(self):
+        """Test string representation after unions."""
+        uf = UnionFind(4)
+
+        uf.union(0, 1)
+        uf.union(2, 3)
+        s = str(uf)
+
+        assert "UnionFind with 2 component(s)" in s
+
+    def test_repr_initial(self):
+        uf = UnionFind(3)
+
+        r = repr(uf)
+
+        assert "UnionFind(n=3" in r
+        assert "components=3" in r
+        assert "parent=" in r
+        assert "rank=" in r
+
+    def test_repr_shows_state(self):
+        """Test repr accurately reflects state."""
+        uf = UnionFind(3)
+
+        uf.union(0, 1)
+        r = repr(uf)
+
+        assert "components=2" in r
+
+
+class TestEdgeCases:
+    """Test edge cases and special scenarios."""
+
+    def test_single_element(self):
+        """Test UnionFind with single element."""
+        uf = UnionFind(1)
+
+        assert uf.find(0) == 0
+        assert uf.components == 1
+        assert uf.connected(0, 0)
+
+    def test_union_same_element(self):
+        """Test union of element with itself."""
+        uf = UnionFind(5)
+
+        result = uf.union(2, 2)
+        assert result is False
+        assert uf.components == 5
+
+    def test_multiple_operations_sequence(self):
+        """Test complex sequence of operations."""
+        uf = UnionFind(10)
+
+        uf.union(0, 1)
+        uf.union(2, 3)
+        uf.union(4, 5)
+        uf.union(6, 7)
+        uf.union(8, 9)
+
+        assert uf.components == 5
+
+        uf.union(0, 2)
+        uf.union(4, 6)
+
+        assert uf.components == 3
+
+        assert uf.connected(0, 3)
+        assert uf.connected(4, 7)
+        assert not uf.connected(0, 4)
+        assert uf.connected(8, 9)
+
+    def test_stress_many_unions(self):
+        """Test with many elements and unions."""
+        n = 1000
+        uf = UnionFind(n)
+
+        # Union all even numbers
+        for i in range(0, n - 2, 2):
+            uf.union(i, i + 2)
+
+        # Union all odd numbers
+        for i in range(1, n - 2, 2):
+            uf.union(i, i + 2)
+
+        assert uf.components == 2
+        assert uf.connected(0, 998)
+        assert uf.connected(1, 999)
+        assert not uf.connected(0, 1)
