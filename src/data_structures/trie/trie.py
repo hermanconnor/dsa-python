@@ -141,6 +141,67 @@ class Trie:
 
         return words
 
+    def delete(self, word: str) -> bool:
+        """
+        Delete a word from the Trie.
+
+        Time Complexity: O(m) where m is the length of the word
+        Space Complexity: O(m) due to recursion stack
+
+        Args:
+            word (str): The word to delete
+
+        Returns:
+            bool: True if word was deleted, False if word didn't exist
+        """
+        if not word:
+            return False
+
+        # Use list to track deletion in nested function
+        deleted: List[bool] = [False]
+
+        def _delete_helper(node: Node, word: str, index: int) -> bool:
+            # Base case: reached end of word
+            if index == len(word):
+                # Word doesn't exist
+                if not node.is_end_of_word:
+                    return False
+
+                # Unmark the end of word
+                node.is_end_of_word = False
+                deleted[0] = True
+
+                # If node has no children, it can be deleted
+                return len(node.children) == 0
+
+            char = word[index]
+
+            # Character not found
+            if char not in node.children:
+                return False
+
+            child_node = node.children[char]
+
+            # Recursively delete from child
+            should_delete_child = _delete_helper(child_node, word, index + 1)
+
+            # Delete child node if needed
+            if should_delete_child:
+                del node.children[char]
+
+                # Return True if current node should also be deleted
+                # (no children and not end of another word)
+                return not node.is_end_of_word and len(node.children) == 0
+
+            return False
+
+        _delete_helper(self.root, word, 0)
+
+        if deleted[0]:
+            self._size -= 1
+
+        return deleted[0]
+
     def display(self) -> List[str]:
         """
         Display all words in the Trie (for debugging purposes).

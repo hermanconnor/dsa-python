@@ -229,6 +229,82 @@ class TestTrieGetAllWordsWithPrefix:
         assert result == []
 
 
+class TestTrieDelete:
+    """Tests for the delete operation."""
+
+    def test_delete_existing_word(self):
+        """Test deleting a word that exists."""
+        trie = Trie()
+
+        trie.insert("test")
+
+        assert trie.delete("test") is True
+        assert len(trie) == 0
+        assert trie.search("test") is False
+
+    def test_delete_nonexistent_word(self):
+        """Test deleting a word that doesn't exist."""
+        trie = Trie()
+
+        trie.insert("test")
+
+        assert trie.delete("other") is False
+        assert len(trie) == 1
+
+    def test_delete_with_common_prefix(self):
+        """Test deleting a word that shares a prefix with another word."""
+        trie = Trie()
+
+        trie.insert("test")
+        trie.insert("testing")
+
+        assert trie.delete("test") is True
+        assert trie.search("test") is False
+        assert trie.search("testing") is True
+        assert len(trie) == 1
+
+    def test_delete_longer_word_keeps_prefix(self):
+        """Test deleting longer word keeps the shorter prefix word."""
+        trie = Trie()
+
+        trie.insert("test")
+        trie.insert("testing")
+
+        assert trie.delete("testing") is True
+        assert trie.search("test") is True
+        assert trie.search("testing") is False
+        assert len(trie) == 1
+
+    def test_delete_empty_string(self):
+        """Test deleting an empty string."""
+        trie = Trie()
+
+        trie.insert("word")
+
+        assert trie.delete("") is False
+        assert len(trie) == 1
+
+    def test_delete_from_empty_trie(self):
+        """Test deleting from an empty Trie."""
+        trie = Trie()
+
+        assert trie.delete("word") is False
+
+    def test_delete_all_words(self):
+        """Test deleting all words from Trie."""
+        trie = Trie()
+
+        words = ["apple", "banana", "cherry"]
+        for word in words:
+            trie.insert(word)
+
+        for word in words:
+            assert trie.delete(word) is True
+
+        assert len(trie) == 0
+        assert trie.display() == []
+
+
 class TestTrieDisplay:
     """Tests for the display operation."""
 
