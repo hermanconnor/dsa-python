@@ -22,6 +22,7 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 - [x] Priority Queue
 - [x] Hashtable (Hashmap) / (Hashset)
 - [x] Union-Find(Disjoint Set)
+- [x] Trie
 
 ## 🎯 My Learning Goals
 
