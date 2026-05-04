@@ -144,6 +144,103 @@ def test_iteration(populated_multiset):
     assert len(list(populated_multiset)) == 6
 
 
+def test_clear_method(populated_multiset):
+    """Tests clearing all elements from the multiset."""
+    assert len(populated_multiset) == 6
+    assert populated_multiset.is_empty() is False
+
+    populated_multiset.clear()
+
+    assert len(populated_multiset) == 0
+    assert populated_multiset.is_empty() is True
+    assert "apple" not in populated_multiset
+    assert len(populated_multiset.items) == 0
+
+
+def test_distinct_elements(populated_multiset):
+    """Tests retrieving unique elements from the multiset."""
+    distinct = populated_multiset.distinct_elements()
+
+    assert isinstance(distinct, set)
+    assert distinct == {"apple", "banana", "orange"}
+
+
+def test_equality():
+    """Tests equality comparisons between Multisets."""
+    ms1 = Multiset(["apple", "banana", "apple"])
+    ms2 = Multiset(["apple", "apple", "banana"])
+    ms3 = Multiset(["apple", "banana"])
+
+    # Identical contents should be equal
+    assert ms1 == ms2
+    # Different counts or items should not be equal
+    assert ms1 != ms3
+    # Comparison with other types should return False (not crash)
+    assert ms1 != ["apple", "apple", "banana"]
+
+
+def test_addition_operator():
+    """Tests the disjoint union (+) of two multisets."""
+    ms1 = Multiset(["apple", "apple", "banana"])
+    ms2 = Multiset(["apple", "orange"])
+
+    result = ms1 + ms2
+
+    # Verify counts are added together
+    assert result.count("apple") == 3
+    assert result.count("banana") == 1
+    assert result.count("orange") == 1
+    assert len(result) == 5
+
+    # Ensure original multisets were not mutated
+    assert len(ms1) == 3
+    assert len(ms2) == 2
+
+
+def test_subtraction_operator():
+    """Tests the difference (-) of two multisets."""
+    ms1 = Multiset(["apple", "apple", "banana", "orange"])
+    ms2 = Multiset(["apple", "banana", "banana"])
+
+    result = ms1 - ms2
+
+    # apple: 2 - 1 = 1
+    # banana: 1 - 2 = -1 (clamped to 0)
+    # orange: 1 - 0 = 1
+    assert result.count("apple") == 1
+    assert result.count("banana") == 0
+    assert result.count("orange") == 1
+    assert len(result) == 2
+
+
+def test_intersection_operator():
+    """Tests the intersection (&) of two multisets (min counts)."""
+    ms1 = Multiset(["apple", "apple", "banana", "orange"])
+    ms2 = Multiset(["apple", "banana", "banana"])
+
+    result = ms1 & ms2
+
+    # Keeps the minimum of both
+    assert result.count("apple") == 1
+    assert result.count("banana") == 1
+    assert result.count("orange") == 0
+    assert len(result) == 2
+
+
+def test_union_operator():
+    """Tests the union (|) of two multisets (max counts)."""
+    ms1 = Multiset(["apple", "apple", "banana"])
+    ms2 = Multiset(["apple", "banana", "banana", "orange"])
+
+    result = ms1 | ms2
+
+    # Keeps the maximum of both
+    assert result.count("apple") == 2
+    assert result.count("banana") == 2
+    assert result.count("orange") == 1
+    assert len(result) == 5
+
+
 def test_repr_method(populated_multiset):
     """Tests the string representation."""
     expected_repr = "Multiset({'apple': 3, 'banana': 2, 'orange': 1})"

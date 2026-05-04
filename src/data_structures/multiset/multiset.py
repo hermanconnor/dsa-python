@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Iterable, Iterator, Hashable
+from typing import Any, Iterable, Iterator, Hashable
 
 
 class Multiset:
@@ -41,6 +41,15 @@ class Multiset:
         """Check if multiset is empty - O(1)"""
         return self._size == 0
 
+    def clear(self) -> None:
+        """Remove all items from the multiset - O(1)"""
+        self.items.clear()
+        self._size = 0
+
+    def distinct_elements(self) -> None:
+        """Return a set of all unique items in the multiset."""
+        return set(self.items.keys())
+
     def __len__(self) -> int:
         """Returns total number of items - O(1)."""
         return self._size
@@ -52,6 +61,57 @@ class Multiset:
     def __iter__(self) -> Iterator[Hashable]:
         """Make bag iterable, yielding all items including duplicates."""
         return self.items.elements()
+
+    def __eq__(self, other: Any) -> bool:
+        """Check if two multisets are equal."""
+        if not isinstance(other, Multiset):
+            return NotImplemented
+
+        return self.items == other.items
+
+    def __add__(self, other: "Multiset") -> "Multiset":
+        """Disjoint Union: sum counts of elements from both multisets."""
+        if not isinstance(other, Multiset):
+            return NotImplemented
+
+        result = Multiset()
+        result.items = self.items + other.items
+        result._size = self._size + other._size
+
+        return result
+
+    def __sub__(self, other: "Multiset") -> "Multiset":
+        """Difference: subtract counts of elements, keeping only positives."""
+        if not isinstance(other, Multiset):
+            return NotImplemented
+
+        result = Multiset()
+        result.items = self.items - other.items
+        result._size = sum(result.items.values())
+
+        return result
+
+    def __and__(self, other: "Multiset") -> "Multiset":
+        """Intersection: keeps the minimum count of matching elements."""
+        if not isinstance(other, Multiset):
+            return NotImplemented
+
+        result = Multiset()
+        result.items = self.items & other.items
+        result._size = sum(result.items.values())
+
+        return result
+
+    def __or__(self, other: "Multiset") -> "Multiset":
+        """Union: keeps the maximum count of matching elements."""
+        if not isinstance(other, Multiset):
+            return NotImplemented
+
+        result = Multiset()
+        result.items = self.items | other.items
+        result._size = sum(result.items.values())
+
+        return result
 
     def __repr__(self) -> str:
         """Returns s string representation for debugging/console use."""
