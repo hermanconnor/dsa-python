@@ -28,7 +28,7 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 
 ### Searching
 
-- [x] Binary Search
+- [x] Binary Search / Binary Search Recursive
 
 ## 🎯 My Learning Goals
 
