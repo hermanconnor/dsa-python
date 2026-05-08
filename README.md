@@ -24,6 +24,12 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 - [x] Union-Find(Disjoint Set)
 - [x] Trie
 
+## 🧮 Algorithms
+
+### Searching
+
+- [x] Binary Search
+
 ## 🎯 My Learning Goals
 
 - Master fundamental data structures and their operations
