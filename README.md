@@ -30,6 +30,7 @@ A comprehensive collection of data structures and algorithms implemented in Pyth
 
 - [x] Binary Search / Binary Search Recursive
 - [x] Bubble Sort
+- [x] Bucket Sort
 
 ## 🎯 My Learning Goals
 
